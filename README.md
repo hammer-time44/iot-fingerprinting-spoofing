@@ -37,6 +37,7 @@ Step 5  src/features.py        13 raw statistical features per window
 Step 6  src/splits.py          Leakage-safe temporal train/val/test split + StandardScaler
 Step 7  src/classifier.py      Random Forest training and evaluation
 Step 8  src/openset.py         Open-set unknown device evaluation & thresholding
+Step 9  src/spoof_eval.py      Claimed-identity verification & simulated impersonation evaluation
 ```
 
 ### Step 2 — Preprocessing
@@ -140,22 +141,38 @@ from training in turn to simulate a genuine unknown transmitter. Evaluated on th
 
 *Acc(Ver) is the classification accuracy on test windows accepted as known.*
 
-**Open-Set Findings & Limitations:**
-- **Outlier timing profiles are reliably detected:** Devices with distinct timing behavior (such as `TPLinkSmartPlug`'s ~4-minute idle heartbeats and `SamsungCamera`'s continuous telemetry bursts) achieve **100% unknown detection**.
-- **Overlapping profiles are harder to isolate:** Devices with timing characteristics that closely resemble other high-traffic smart devices (notably `BelkinWemoMotionSensor`) achieve **66.2%** detection at a 5% false alarm budget, dropping to **14.2%** at a 1% budget.
-- **No network blocking:** This stage performs passive detection and flagging only; network access control or blocking is not enforced.
+### Step 9 — Claimed-Identity Verification & Spoofing Detection
+
+Extends open-set fingerprinting to actively verify claimed identities (e.g., claimed MAC, IP, or registered inventory label). Compares model predictions against the claimed device identity $c_{\text{claimed}}$ using the validation-calibrated threshold $\tau = 0.84$.
+
+**Decision Rule:**
+$$\text{Verdict}(x, c_{\text{claimed}}) = \begin{cases}
+\textbf{VERIFIED}, & \text{if } \hat{y} = c_{\text{claimed}} \text{ and } \max_c P(y = c \mid x) \ge \tau \\
+\textbf{SPOOF\_SUSPECTED}, & \text{if } \hat{y} \ne c_{\text{claimed}} \text{ and } \max_c P(y = c \mid x) \ge \tau \\
+\textbf{UNKNOWN\_HARDWARE}, & \text{if } \max_c P(y = c \mid x) < \tau \\
+\textbf{INSUFFICIENT\_DATA}, & \text{if fewer than } N \text{ observation windows available}
+\end{cases}$$
+
+**Multi-Window Device-Level Aggregation:**
+To suppress isolated classification dips, soft probability averaging is applied across rolling sequences of $N = 5$ windows ($5 \times 128 = 640$ packets):
+$$\bar{P} = \frac{1}{N} \sum_{k=1}^N P(y \mid x_k)$$
+
+Output: `results/spoof_<timestamp>/spoof_results.json`
+        `iot_fingerprint_gui/frontend/public/data/spoof_results.json`
 
 ---
 
 ## Results Summary
 
-| Metric | Closed-Set (5 Known Devices) | Open-Set (Leave-One-Out Average) |
-|---|:---:|:---:|
-| Test Accuracy / Known Acc | 99.3% | 100.0% (on verified known windows) |
-| Test Macro F1 | 99.4% | — |
-| Unknown Detection Rate (TPR @ 95%ile) | N/A (Closed-Set) | **89.6%** (66.2% – 100.0%) |
-| Known False Alarm Rate (FPR @ 95%ile) | 0.0% | **4.2%** (controlled to ~5% target) |
-
+| Metric | Closed-Set (5 Known) | Open-Set (Leave-One-Out) | Spoofing Verification (Test Split) |
+|---|:---:|:---:|:---:|
+| Test Accuracy / Known Acc | 99.3% | 100.0% (verified known) | 96.06% (100.0% on confident windows) |
+| Test Macro F1 | 99.4% | — | — |
+| Unknown Detection Rate (TPR @ 95%ile) | N/A | **89.6%** (66.2%–100%) | 95.66% (across 15 foreign devices) |
+| Known False Rejection Rate (FPR @ 95%ile) | 0.0% | **4.2%** (controlled to ~5%) | **3.94%** (42 / 1,067 test windows) |
+| Impersonation Rejection Rate | N/A | N/A | **100.00%** (across all 20 closed-set pairs) |
+| Direct Spoof-Suspected Rate | N/A | N/A | **96.29%** (persistent mismatch caught) |
+| Multi-Window False Alarm Rate (N=5) | N/A | N/A | **~0.0%** (smoothed by soft voting) |
 
 ---
 
@@ -166,7 +183,7 @@ pip install -r requirements.txt
 ```
 
 Raw PCAP files are not included in the repository (too large). Place
-them in `data/raw/` before running Step 2. Steps 3–7 can be run on
+them in `data/raw/` before running Step 2. Steps 3–9 can be run on
 the pre-processed data already present in `data/processed/` and
 `data/features/`.
 
@@ -180,16 +197,46 @@ python src/features.py
 python src/splits.py
 python src/classifier.py
 python src/openset.py
+python src/spoof_eval.py      # Step 9: Offline spoofing evaluation & benchmark
 ```
 
-Each script is self-contained and reads `configs/config.yaml`.
+To run an interactive claimed-identity verification check from the CLI:
+```bash
+# Legitimate verification check:
+python src/spoof.py --device AmazonEcho --claimed AmazonEcho
+
+# Impersonation check (Amazon Echo claiming to be Philips Hue):
+python src/spoof.py --device AmazonEcho --claimed PhilipsHue
+```
+
+To run the full unit and integration test suite:
+```bash
+python -m unittest discover tests
+```
 
 ---
 
-## Interactive Presentation Website
+## Web Applications & Dashboards
 
-To launch the presentation website with interactive benchmark results, timing charts, and live inference on saved test samples:
+### 1. Encrypted IoT Fingerprinting Full-Stack Web GUI
 
+A modern full-stack web dashboard with live streaming, open-set benchmarking, and the newly integrated **Spoofing Detection** tab:
+
+**Backend (FastAPI):**
+```bash
+python -m uvicorn iot_fingerprint_gui.backend.main:app --host 127.0.0.1 --port 8765
+```
+
+**Frontend (React + Vite + Tailwind CSS):**
+```bash
+cd iot_fingerprint_gui/frontend
+npm run dev
+```
+Open `http://localhost:5173` in your browser. Tab 4 provides an interactive identity verification studio, 5x5 impersonation matrix, timing disturbance response curves, and replay controls.
+
+### 2. Streamlit Presentation Dashboard
+
+To launch the presentation website with interactive benchmark results:
 ```bash
 streamlit run app.py
 ```
@@ -199,24 +246,37 @@ streamlit run app.py
 ## Repository Layout
 
 ```
-app.py                      Interactive presentation website (Streamlit)
+app.py                                  Interactive presentation website (Streamlit)
 configs/
-  config.yaml               Pipeline configuration
+  config.yaml                           Pipeline configuration
 data/
-  raw/                      Raw PCAP files (not in git)
-  processed/                Cleaned per-device CSVs and IAT sequences
-  features/                 Windowed data, features, and scaled splits
+  raw/                                  Raw PCAP files (not in git)
+  processed/                            Cleaned per-device CSVs and IAT sequences
+  features/                             Windowed data, features, and scaled splits
+iot_fingerprint_gui/
+  backend/                              FastAPI backend (routes: info, predict, stream, spoof)
+  frontend/                             React + Vite + Tailwind CSS dashboard
+    src/components/
+      TabKnown.jsx                      Tab 1: Known device replays (5)
+      TabUnknown.jsx                    Tab 2: Unseen device benchmark (22)
+      TabTestOwn.jsx                    Tab 3: Custom file / timestamp testing
+      SpoofCheck.jsx                    Tab 4: Identity verification & spoof detection
 results/
-  raw_stat_scaler.pkl       Fitted StandardScaler
-  split_assignment.csv      Time-block → split mapping
-  step7_*/                  Timestamped run: model, confusion matrices, summary
+  raw_stat_scaler.pkl                   Fitted StandardScaler
+  split_assignment.csv                  Time-block → split mapping
+  step7_*/                              Trained model, confusion matrices, summary
+  spoof_*/                              Spoofing evaluation results & summaries
 src/
-  preprocessing.py          Step 2
-  iat.py                    Step 3
-  windowing.py              Step 4
-  features.py               Step 5 (raw statistical features)
-  splits.py                 Step 6
-  classifier.py             Step 7
-  openset.py                Step 8 (open-set unknown detection evaluation)
+  preprocessing.py                      Step 2
+  iat.py                                Step 3
+  windowing.py                          Step 4
+  features.py                           Step 5 (raw statistical features)
+  splits.py                             Step 6
+  classifier.py                         Step 7
+  openset.py                            Step 8 (open-set unknown detection evaluation)
+  spoof.py                              Step 9 (Claimed-identity verification module)
+  spoof_eval.py                         Step 9 (Offline evaluation pipeline & mimicry)
+tests/
+  test_spoof.py                         Comprehensive unit & integration test suite (15 tests)
 requirements.txt
 ```

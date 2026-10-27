@@ -35,10 +35,12 @@ app.add_middleware(
 from .routes.info import router as info_router
 from .routes.predict import router as predict_router
 from .routes.stream import router as stream_router
+from .routes.spoof import router as spoof_router
 
 app.include_router(info_router, tags=["Information & Evaluation"])
 app.include_router(predict_router, tags=["Inference"])
 app.include_router(stream_router, tags=["Live Streaming & Replay"])
+app.include_router(spoof_router, tags=["Spoofing Detection & Claimed-Identity Verification"])
 
 
 @app.get("/health")
@@ -54,7 +56,9 @@ def root():
         "docs_url": "/docs",
         "health": "/health",
         "model_info": "/model/info",
-        "evaluation": "/evaluation"
+        "evaluation": "/evaluation",
+        "spoof_results": "/spoof/results",
+        "spoof_verify": "/spoof/verify",
     }
 
 

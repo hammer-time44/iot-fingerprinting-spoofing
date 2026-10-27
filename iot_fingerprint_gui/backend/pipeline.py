@@ -143,16 +143,23 @@ def process_packet_timestamps(
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """
     Process raw packet arrival timestamps:
-      1. Compute IAT = t[i] - t[i-1]
-      2. Apply log1p(IAT)
-      3. Segment into non-overlapping 128-packet windows
-      4. Extract 13 features & run model inference
-      5. Aggregate device-level verdict via majority vote
+      1. Validate non-finite values (NaN, Inf, -Inf)
+      2. Compute IAT = t[i] - t[i-1]
+      3. Apply log1p(IAT)
+      4. Segment into non-overlapping 128-packet windows
+      5. Extract 13 features & run model inference
+      6. Aggregate device-level decision using standardized soft probability averaging
     """
     if len(timestamps) < 2:
         return [], {"error": "Need at least 2 timestamps to compute inter-arrival times"}
 
-    ts = np.array(sorted(timestamps), dtype=np.float64)
+    arr_ts = np.asarray(timestamps, dtype=np.float64)
+    if not np.all(np.isfinite(arr_ts)):
+        return [], {
+            "error": "Invalid timestamp input: timestamps contain non-finite values (NaN, positive infinity, or negative infinity)."
+        }
+
+    ts = np.sort(arr_ts)
     raw_iats = np.diff(ts)
     log1p_iats = np.log1p(np.maximum(raw_iats, 0.0))
 
@@ -177,11 +184,19 @@ def process_packet_timestamps(
             labels.append(res["closest_profile"])
         confs.append(res["top_prob"])
 
-    # Device-level decision via majority vote
     total_w = len(window_results)
     known_w = len(labels)
+
+    # Standardized soft probability averaging across all windows
+    all_probs = np.array([[w["probs"][c] for c in CLASSES] for w in window_results], dtype=np.float64)
+    mean_probs = all_probs.mean(axis=0) if len(all_probs) > 0 else np.zeros(len(CLASSES))
+    top_mean_idx = int(np.argmax(mean_probs)) if len(all_probs) > 0 else 0
+    top_mean_conf = float(mean_probs[top_mean_idx]) if len(all_probs) > 0 else 0.0
+    soft_label = CLASSES[top_mean_idx] if len(all_probs) > 0 else "UNKNOWN"
+    soft_verdict = "KNOWN" if top_mean_conf >= threshold else "Unfamiliar Device (Below Threshold)"
+
+    # Legacy majority vote retained for compatibility
     if known_w > total_w / 2:
-        # Majority of windows are confident and agree
         from collections import Counter
         counts = Counter(labels)
         dominant, dom_count = counts.most_common(1)[0]
@@ -190,7 +205,7 @@ def process_packet_timestamps(
             device_label = dominant
         else:
             device_verdict = "UNKNOWN"
-            device_label = f"Uncertain / Mixed Known Profiles"
+            device_label = "Uncertain / Mixed Known Profiles"
     else:
         device_verdict = "UNKNOWN"
         device_label = "Unfamiliar Device (Below Threshold)"
@@ -198,6 +213,10 @@ def process_packet_timestamps(
     summary = {
         "device_verdict": device_verdict,
         "device_label": device_label,
+        "soft_verdict": soft_verdict,
+        "soft_label": soft_label,
+        "soft_confidence": round(top_mean_conf, 4),
+        "mean_probabilities": {CLASSES[i]: round(float(mean_probs[i]), 4) for i in range(len(CLASSES))},
         "total_windows": total_w,
         "known_windows": known_w,
         "unknown_windows": total_w - known_w,

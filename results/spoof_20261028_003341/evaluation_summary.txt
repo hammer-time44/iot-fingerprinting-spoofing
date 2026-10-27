@@ -1,0 +1,31 @@
+================================================================================
+IAT-BASED IOT DEVICE SPOOFING DETECTION — EVALUATION SUMMARY
+================================================================================
+
+Model: rf_model.pkl
+Confidence Threshold (tau): 0.8400
+Aggregation Window (N):     5
+
+1. LEGITIMATE TRAFFIC (SOURCE == CLAIMED):
+   Total Test Windows:         1067
+   Verified Rate:              96.06%
+   False Rejection Rate:       3.94%
+   - AmazonEcho              : Verified  87.8%, False Reject 12.2%
+   - BelkinWemoMotionSensor  : Verified  98.6%, False Reject  1.4%
+   - PhilipsHue              : Verified  96.7%, False Reject  3.3%
+   - SamsungCamera           : Verified  98.4%, False Reject  1.6%
+   - TPLinkSmartPlug         : Verified 100.0%, False Reject  0.0%
+
+2. SIMULATED IMPERSONATION (SOURCE != CLAIMED):
+   Mean Claimed-Identity Rejection Rate: 100.00%
+   Mean Spoof-Suspected Rate:            96.29%
+   Impersonation Bypass Rate:            0.00%
+
+3. TIMING DISTURBANCES & MIMICRY (AVERAGE ACROSS PAIRS):
+   - Quantile Reshaping Strength 0.0: 100.0% caught / rejected
+   - Quantile Reshaping Strength 0.2:  98.7% caught / rejected
+   - Quantile Reshaping Strength 0.4:  97.0% caught / rejected
+   - Quantile Reshaping Strength 0.6:  86.0% caught / rejected
+   - Quantile Reshaping Strength 0.8:  68.2% caught / rejected
+   - Quantile Reshaping Strength 1.0:  24.6% caught / rejected
+================================================================================

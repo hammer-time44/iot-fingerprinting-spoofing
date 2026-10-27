@@ -3,10 +3,11 @@ import Navbar from './components/Navbar';
 import TabKnown from './components/TabKnown';
 import TabUnknown from './components/TabUnknown';
 import TabTestOwn from './components/TabTestOwn';
-import { Layers, HelpCircle, HardDrive } from 'lucide-react';
+import SpoofCheck from './components/SpoofCheck';
+import { Layers, HelpCircle, HardDrive, ShieldAlert } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('known'); // 'known' | 'unknown' | 'test'
+  const [activeTab, setActiveTab] = useState('known'); // 'known' | 'unknown' | 'test' | 'spoof'
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark';
   });
@@ -67,6 +68,18 @@ export default function App() {
               <HardDrive className="w-4 h-4" />
               <span>Test Your Own Device</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('spoof')}
+              className={`flex items-center space-x-2 py-3.5 border-b-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
+                activeTab === 'spoof'
+                  ? 'border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 font-bold'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-gray-200'
+              }`}
+            >
+              <ShieldAlert className="w-4 h-4" />
+              <span>Spoofing Detection</span>
+            </button>
           </div>
         </div>
       </nav>
@@ -76,6 +89,7 @@ export default function App() {
         {activeTab === 'known' && <TabKnown threshold={threshold} />}
         {activeTab === 'unknown' && <TabUnknown threshold={threshold} setThreshold={setThreshold} />}
         {activeTab === 'test' && <TabTestOwn threshold={threshold} />}
+        {activeTab === 'spoof' && <SpoofCheck globalThreshold={threshold} />}
       </main>
 
       {/* Footer */}
