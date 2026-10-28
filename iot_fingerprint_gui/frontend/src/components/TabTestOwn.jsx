@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, Radio, FileText, Download, ShieldAlert, Play, Square, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Upload, Radio, FileText, Download, ShieldAlert, Play, Square, CheckCircle, AlertTriangle, Zap } from 'lucide-react';
 import ProbabilityBars from './ProbabilityBars';
 import IatTimelineChart from './IatTimelineChart';
 import FeaturesTable from './FeaturesTable';
+import { SAMPLE_ECHO_TIMESTAMPS, SAMPLE_UNKNOWN_TIMESTAMPS } from '../data/sampleTimestamps';
 
 export default function TabTestOwn({ threshold = 0.84 }) {
   const [deviceName, setDeviceName] = useState('My Test Device');
@@ -90,6 +91,19 @@ export default function TabTestOwn({ threshold = 0.84 }) {
     } finally {
       setUploadLoading(false);
     }
+  };
+
+  // Sample Timestamp Loaders
+  const handleLoadSampleEcho = () => {
+    setTimestampText(SAMPLE_ECHO_TIMESTAMPS);
+    setDeviceName('Amazon Echo (Pasted Sample)');
+    setPasteError('');
+  };
+
+  const handleLoadSampleUnknown = () => {
+    setTimestampText(SAMPLE_UNKNOWN_TIMESTAMPS);
+    setDeviceName('Withings Smart Scale (Unknown Device Sample)');
+    setPasteError('');
   };
 
   // Handle Paste Timestamps
@@ -454,9 +468,32 @@ export default function TabTestOwn({ threshold = 0.84 }) {
         {inputMode === 'paste' && (
           <form onSubmit={handlePasteSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-800 dark:text-gray-200 mb-1">
-                Paste Packet Timestamps (space, comma, or newline-separated):
-              </label>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                <label className="block text-xs font-semibold text-gray-800 dark:text-gray-200">
+                  Paste Packet Timestamps (space, comma, or newline-separated):
+                </label>
+                <div className="flex items-center space-x-3 text-xs">
+                  <button
+                    type="button"
+                    onClick={handleLoadSampleEcho}
+                    className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center space-x-1 transition-colors cursor-pointer"
+                    title="Load 129 authentic packet timestamps from an Amazon Echo"
+                  >
+                    <span className="text-amber-500">⚡</span>
+                    <span>Load Sample Echo Timestamps (129 Packets)</span>
+                  </button>
+                  <span className="text-gray-300 dark:text-gray-700">|</span>
+                  <button
+                    type="button"
+                    onClick={handleLoadSampleUnknown}
+                    className="font-medium text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 flex items-center space-x-1 transition-colors cursor-pointer"
+                    title="Load 129 authentic packet timestamps from Withings Smart Scale (an unseen device)"
+                  >
+                    <span className="text-amber-500">⚡</span>
+                    <span>Load Unknown Device Sample (129 Packets)</span>
+                  </button>
+                </div>
+              </div>
               <textarea
                 rows={4}
                 value={timestampText}
