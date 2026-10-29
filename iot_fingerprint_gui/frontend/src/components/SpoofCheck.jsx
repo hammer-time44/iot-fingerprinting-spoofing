@@ -914,24 +914,7 @@ export default function SpoofCheck({ globalThreshold = 0.84 }) {
         </div>
       </div>
 
-      {/* ── Technical Principles & Limitations Callout ────────────────────────── */}
-      <div className="p-5 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs space-y-2.5">
-        <div className="font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-2">
-          <Info className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-          Technical Guarantees & Operational Limitations
-        </div>
-        <ul className="list-disc pl-5 space-y-1.5 text-gray-700 dark:text-gray-300 text-[11px] leading-relaxed">
-          <li>
-            <b>Class-Level Verification:</b> The Random Forest recognizes behavioral device <i>classes</i> (e.g. Amazon Echo vs. SmartCam), not cryptographic or physical hardware tokens. Devices sharing identical firmware (such as Belkin WeMo Switches and Motion Sensors) cannot be distinguished by timing alone.
-          </li>
-          <li>
-            <b>Controlled Simulation:</b> Impersonation tests are evaluated offline by feeding recorded traffic with mismatched identity claims. This proves behavioral mismatch detection but does not simulate active live MAC/IP spoofing on an untrusted physical medium.
-          </li>
-          <li>
-            <b>False Rejection Budget:</b> The confidence threshold &tau; = 0.84 is calibrated strictly on the validation split (5th percentile) targeting a &le;5% false alarm budget on legitimate traffic. Over multi-window sequences (N=5), probability averaging suppresses isolated false rejections to ~0%.
-          </li>
-        </ul>
-      </div>
+
     </div>
   );
 }
