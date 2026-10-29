@@ -94,12 +94,9 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-4 px-4 text-center text-xs text-gray-500 dark:text-gray-400">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-2">
           <div>
             Encrypted IoT Device Fingerprinting &middot; Model: Random Forest (100 Trees) &middot; 13 Timing Moments
-          </div>
-          <div>
-            Pipeline: <code>log1p(IAT) &rarr; 128 pkts &rarr; Z-Score &rarr; Top-Confidence Threshold ({threshold.toFixed(2)})</code>
           </div>
         </div>
       </footer>

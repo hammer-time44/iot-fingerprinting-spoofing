@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Moon, Sun, Cpu, AlertTriangle } from 'lucide-react';
+import { Shield, Moon, Sun, Cpu } from 'lucide-react';
 
 export default function Navbar({ darkMode, setDarkMode, threshold = 0.84 }) {
   return (
@@ -39,15 +39,6 @@ export default function Navbar({ darkMode, setDarkMode, threshold = 0.84 }) {
         </div>
       </div>
 
-      {/* Honest-UI Caveat Banner */}
-      <div className="bg-slate-100 dark:bg-slate-800/60 border-t border-b border-slate-200 dark:border-slate-700/60 px-4 py-1.5 text-[11px] text-slate-600 dark:text-slate-300">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-1.5 text-center">
-          <AlertTriangle className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
-          <span>
-            <strong>Honest UI Notice:</strong> UNKNOWN means the traffic does not resemble the 5 trained devices. KNOWN with high confidence on an unfamiliar device is still possible, because the model has only ever seen 5.
-          </span>
-        </div>
-      </div>
     </header>
   );
 }
