@@ -7,8 +7,10 @@ import time
 import asyncio
 from typing import Optional, List
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
+import numpy as np
 from ..pipeline import (
     CALIBRATED_THRESHOLD,
+    FEATURE_NAMES,
     scale_features,
     predict_window,
     compute_raw_stats,
@@ -100,8 +102,15 @@ async def replay_device_stream(
 
             # Get current window
             win_data = windows[w_idx % len(windows)]
-            raw_feats = win_data.get("scaled_features", {})
-            scaled_vec = scale_features(raw_feats)
+            if "iats" in win_data and len(win_data["iats"]) >= 128:
+                raw_feats = compute_raw_stats(win_data["iats"][:128])
+                scaled_vec = scale_features(raw_feats)
+            elif "scaled_features" in win_data:
+                raw_feats = win_data.get("features", win_data["scaled_features"])
+                scaled_vec = np.array([[win_data["scaled_features"][fn] for fn in FEATURE_NAMES]], dtype=np.float64)
+            else:
+                raw_feats = win_data.get("features", {})
+                scaled_vec = scale_features(raw_feats)
 
             pred_res = predict_window(
                 scaled_vec,
