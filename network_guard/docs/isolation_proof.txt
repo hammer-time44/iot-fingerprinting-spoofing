@@ -1,0 +1,22 @@
+================================================================================
+             NETWORK DEFENSE LAB — ISOLATION & INTEGRITY PROOF                  
+================================================================================
+Verification Timestamp: 2026-10-29T11:46:13.629674
+Target Repository Root: C:\Users\Murali\Desktop\cn-proj\two\iot-fingerprinting
+Protected Target Scope: All files and directories OUTSIDE network_guard/
+Initial Baseline Entries: 178 files
+Current Scanned Entries:  178 files
+--------------------------------------------------------------------------------
+Modified Files Outside network_guard/: 0
+Added Files Outside network_guard/:    0
+Deleted Files Outside network_guard/:  0
+--------------------------------------------------------------------------------
+VERDICT: PASSED (STRICT 100% ISOLATION PRESERVED)
+
+CERTIFICATION:
+All 178 files outside network_guard/ match their initial baseline SHA-256 hashes exactly.
+Zero existing files, configs, requirements, notebooks, or models outside
+the network_guard/ directory were created, modified, renamed, or deleted.
+All development, testing, benchmarks, dependencies, and documentation are
+completely contained within network_guard/.
+================================================================================

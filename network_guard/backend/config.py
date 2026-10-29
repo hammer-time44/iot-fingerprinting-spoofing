@@ -1,91 +1,102 @@
-"""
-Configuration & Constants for Network Defense Lab
-"""
-from pathlib import Path
 import os
+import sys
+import warnings
+from pathlib import Path
 
-# Project Roots
-GUARD_ROOT = Path(__file__).resolve().parent.parent
-WORKSPACE_ROOT = GUARD_ROOT.parent
+# Suppress scikit-learn parallel execution user warnings in newer Python environments
+warnings.filterwarnings("ignore", category=UserWarning)
 
-# Configurable Ports (can be overridden by environment)
-BACKEND_PORT = int(os.environ.get("BACKEND_PORT", 8766))
-FRONTEND_PORT = int(os.environ.get("FRONTEND_PORT", 5174))
+# Paths
+BACKEND_DIR = Path(__file__).resolve().parent
+NETWORK_GUARD_DIR = BACKEND_DIR.parent
+PROJECT_ROOT = NETWORK_GUARD_DIR.parent
 
-# Default Confidence Threshold
+# Add PROJECT_ROOT to sys.path so we can import src.features, src.spoof read-only
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+# Model & Data Artifact Paths (Existing Read-Only files)
+DEFAULT_MODEL_PATH = PROJECT_ROOT / "results" / "step7_20261026_151020" / "rf_model.pkl"
+DEFAULT_SCALER_PATH = PROJECT_ROOT / "results" / "raw_stat_scaler.pkl"
+DATA_FEATURES_DIR = PROJECT_ROOT / "data" / "features"
+RESULTS_DIR = NETWORK_GUARD_DIR / "results"
+LOGS_DIR = NETWORK_GUARD_DIR / "logs"
+
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Default Model Parameters
 DEFAULT_TAU = 0.84
+DEFAULT_WINDOW_SIZE = 128
+DEFAULT_AGG_WINDOW_COUNT = 5  # n=5 windows for device-level verdict
+DEFAULT_HYSTERESIS = 2        # 2 consecutive agreeing verdicts required to change state
 
-# Authoritative Known Devices
+# Network Port Defaults
+BACKEND_PORT = int(os.environ.get("PORT", "8766"))
+FRONTEND_PORT = int(os.environ.get("VITE_PORT", "5174"))
+
+# Known Devices (in exact model class order)
 KNOWN_DEVICES = [
     "AmazonEcho",
     "BelkinWemoMotionSensor",
     "PhilipsHue",
     "SamsungCamera",
-    "TPLinkSmartPlug",
+    "TPLinkSmartPlug"
 ]
 
-# Static Simulated Network Topology Configuration
-HOME_NETWORK = {
-    "subnet": "192.168.1.0/24",
-    "gateway_ip": "192.168.1.1",
-    "gateway_mac": "52:54:00:12:34:56",
-}
-
-ATTACKER_NETWORK = {
-    "subnet": "10.0.99.0/24",
-    "gateway_ip": "10.0.99.1",
-}
-
-# 5 Registered Home LAN Hosts
+# Registered Home LAN Topology
 REGISTERED_HOSTS = {
-    "host_echo": {
-        "id": "host_echo",
-        "name": "Amazon Echo Dot",
-        "device_class": "AmazonEcho",
-        "ip": "192.168.1.50",
-        "mac": "44:65:0d:56:cc:d3",
-        "vlan": "home_iot",
+    "host-echo": {
+        "id": "host-echo",
+        "name": "Amazon Echo (Living Room)",
+        "claimed_device": "AmazonEcho",
+        "mac": "44:65:0D:56:CC:D3",
+        "ip": "192.168.1.101",
+        "network": "HOME_LAN",
+        "icon": "Speaker"
     },
-    "host_wemo": {
-        "id": "host_wemo",
-        "name": "Belkin WeMo Motion",
-        "device_class": "BelkinWemoMotionSensor",
-        "ip": "192.168.1.51",
-        "mac": "ec:1a:59:79:f4:89",
-        "vlan": "home_iot",
+    "host-wemo": {
+        "id": "host-wemo",
+        "name": "Belkin WeMo Motion (Hallway)",
+        "claimed_device": "BelkinWemoMotionSensor",
+        "mac": "EC:1A:59:79:F4:89",
+        "ip": "192.168.1.102",
+        "network": "HOME_LAN",
+        "icon": "Activity"
     },
-    "host_hue": {
-        "id": "host_hue",
-        "name": "Philips Hue Bridge",
-        "device_class": "PhilipsHue",
-        "ip": "192.168.1.52",
-        "mac": "00:17:88:21:f7:ae",
-        "vlan": "home_iot",
+    "host-hue": {
+        "id": "host-hue",
+        "name": "Philips Hue Bridge (Lighting Hub)",
+        "claimed_device": "PhilipsHue",
+        "mac": "00:17:88:24:76:FF",
+        "ip": "192.168.1.103",
+        "network": "HOME_LAN",
+        "icon": "Lightbulb"
     },
-    "host_cam": {
-        "id": "host_cam",
-        "name": "Samsung SmartCam",
-        "device_class": "SamsungCamera",
-        "ip": "192.168.1.53",
-        "mac": "00:16:6c:ab:6b:88",
-        "vlan": "home_iot",
+    "host-cam": {
+        "id": "host-cam",
+        "name": "Samsung SmartCam (Entrance)",
+        "claimed_device": "SamsungCamera",
+        "mac": "00:16:6C:AB:6B:88",
+        "ip": "192.168.1.104",
+        "network": "HOME_LAN",
+        "icon": "Camera"
     },
-    "host_plug": {
-        "id": "host_plug",
-        "name": "TP-Link Smart Plug",
-        "device_class": "TPLinkSmartPlug",
-        "ip": "192.168.1.54",
-        "mac": "50:c7:bf:00:56:39",
-        "vlan": "home_iot",
-    },
+    "host-plug": {
+        "id": "host-plug",
+        "name": "TP-Link Smart Plug (Office)",
+        "claimed_device": "TPLinkSmartPlug",
+        "mac": "50:C7:BF:00:56:39",
+        "ip": "192.168.1.105",
+        "network": "HOME_LAN",
+        "icon": "Power"
+    }
 }
 
-# Storage & Output Paths inside network_guard
-RESULTS_DIR = GUARD_ROOT / "results"
-LOGS_DIR = GUARD_ROOT / "logs"
-DOCS_DIR = GUARD_ROOT / "docs"
-
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
-DOCS_DIR.mkdir(parents=True, exist_ok=True)
-
+GATEWAY_INFO = {
+    "name": "Security Gateway & Timing Monitor",
+    "mac": "52:54:00:12:34:56",
+    "ip": "192.168.1.1",
+    "lan_subnet": "192.168.1.0/24",
+    "attacker_subnet": "10.0.0.0/24"
+}

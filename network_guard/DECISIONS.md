@@ -1,56 +1,49 @@
-# Architectural & Engineering Decisions (DECISIONS.md)
-## Network Defense Lab: Encrypted IoT Device Fingerprinting via Traffic Timing Analysis
+# Network Defense Lab — Architecture & Engineering Decisions (DECISIONS.md)
 
-This document records all architectural choices, sensible defaults, and fallback mechanisms selected during the end-to-end development of the **Network Defense Lab** (`network_guard/`).
-
----
-
-### 1. Model & Scaler Artifact Discovery (Read-Only)
-* **Model Selection:** Automatically selects the latest authoritative 13-moment Random Forest model (`results/step7_20261026_151020/rf_model.pkl`, 100 estimators, Gini criterion, single-threaded inference for fast simulation ticks). Any DWT (Discrete Wavelet Transform) model is explicitly excluded.
-* **Scaler Selection:** Authoritative `results/raw_stat_scaler.pkl` (StandardScaler fitted strictly on training data across the 13 raw timing moments).
-* **Code Reuse Mechanism:** The repository root is prepended to `sys.path` in Python to import existing canonical implementations:
-  * `src.features.RAW_FEATURE_NAMES` and `src.features.compute_raw_stats`
-  * `src.spoof.verdicts` and `src.spoof.verify_stream`
-  * `src.spoof_eval.quantile_map` and `src.spoof_eval.apply_jitter`
-  Zero reimplementation of core math or verdict formulas ensures mathematical parity.
+This log documents every architectural assumption, design default, and fallback implemented in `network_guard/`.
 
 ---
 
-### 2. Dataset Sourcing & Anti-Leakage Rules
-* **Test Split Only for Legitimate Hosts:** To prevent data leakage, legitimate traffic simulation draws exclusively from test-split windows (`data/features/raw_scaled_test.csv` window IDs mapped to raw IAT rows in `data/features/<Device>_windows.csv`).
-* **Window Cycling:** When a host finishes its test-split windows (e.g. T-Link Smart Plug has 9 test windows), it seamlessly cycles back to window 0 with consistent sequence tracking.
-* **Foreign Hardware (Unknown Devices):** Sourced from `data/features/unknown_devices_windows.csv` containing 15 distinct unseen consumer devices (Withings scale, PixStar frame, LiFX bulb, etc.).
+## 1. Port Configuration & Coexistence
+* **Decision:** Backend defaults to port `8766` and frontend defaults to port `5174`.
+* **Rationale:** The existing `iot_fingerprint_gui` service runs on port `8765` (backend) and `5173` (frontend). Using `8766` and `5174` prevents port binding collisions while allowing both environments to operate concurrently.
+* **Fallback / Override:** Both ports are fully configurable via environment variables (`PORT` and `VITE_PORT`) and `.env`.
 
----
+## 2. Model & Scaler Reuse Strategy (Zero Retraining)
+* **Decision:** Load the authoritative 100-tree Random Forest model from `results/step7_20261026_151020/rf_model.pkl` and the standard scaler dictionary from `results/raw_stat_scaler.pkl`.
+* **Feature Extraction:** Import `compute_raw_stats` and `RAW_FEATURE_NAMES` directly from `src/features.py` read-only by adding project root to `sys.path`.
+* **Zero Discrepancy Parity:** Verified that computing features on raw test-split windows and scaling matches `raw_scaled_test.csv` within $1.9 \times 10^{-7}$ (well within the $\le 10^{-4}$ tolerance threshold).
 
-### 3. Port & Networking Choices
-* **Backend Port:** Defaults to `8766` (configurable via `.env`). This avoids port collision with the existing project GUI running on `8765`.
-* **Frontend Port:** Defaults to `5174` (configurable via `.env`). This avoids collision with Vite on `5173`.
-* **CORS Policy:** Open to all localhost origins (`http://localhost:*`, `http://127.0.0.1:*`) for development ease.
-* **Zero Network Impact:** No raw sockets (`AF_PACKET`), no packet transmission, no kernel firewall modifications (`iptables -A` / `nft add`). All firewall rules are synthesized purely as text representations.
+## 3. Ground-Truth Known Device Registry & Display Metadata
+* **Decision:** The Home LAN topology registers the 5 known devices trained by the model with realistic display metadata:
+  1. `AmazonEcho` &rarr; MAC: `44:65:0D:56:CC:D3`, IP: `192.168.1.101`, Location: "Living Room"
+  2. `BelkinWemoMotionSensor` &rarr; MAC: `EC:1A:59:79:F4:89`, IP: `192.168.1.102`, Location: "Hallway"
+  3. `PhilipsHue` &rarr; MAC: `00:17:88:24:76:FF`, IP: `192.168.1.103`, Location: "Lighting Hub"
+  4. `SamsungCamera` &rarr; MAC: `00:16:6C:AB:6B:88`, IP: `192.168.1.104`, Location: "Front Entrance"
+  5. `TPLinkSmartPlug` &rarr; MAC: `50:C7:BF:00:56:39`, IP: `192.168.1.105`, Location: "Home Office"
+* **Gateway:** MAC: `52:54:00:12:34:56`, IP: `192.168.1.1` (Defense Gateway / Monitor)
+* **Attacker Subnet:** `10.0.0.0/24`, with simulated rogue hosts injected on demand.
 
----
+## 4. Test-Split Only Replay for Legitimate Simulation
+* **Decision:** In simulations, legitimate devices ONLY replay windows present in `data/features/raw_scaled_test.csv` (matched by `window_id` to raw windows in `data/features/<Device>_windows.csv`).
+* **Rationale:** Strictly prohibits data leakage and training set memorization artifacts. When windows are exhausted, the index cycles with a deterministic shuffle seed.
 
-### 4. Decision Engine & Response Policy Defaults
-* **$\tau$ Threshold:** Default $\tau = 0.84$ read from config and results metadata. Can be adjusted live via the API (`POST /config/tau`) or scenario slider.
-* **State Machine & Hysteresis:**
-  * Initial State: `OBSERVING`
-  * Allowed States: `OBSERVING`, `TRUSTED`, `QUARANTINED`, `ISOLATED`
-  * Hysteresis: Requires **2 consecutive agreeing device-level verdicts** before triggering a state transition (prevents flapping from isolated noisy windows).
-* **Device-Level Aggregation:**
-  * Window size: $N = 5$ windows.
-  * Windows $< 5$: Produces `INSUFFICIENT_DATA` &rarr; Policy maps to `OBSERVE` (Allowed with monitoring).
-  * Method: Soft probability distribution averaging across the last $N$ windows.
-* **Policy Mapping Matrix:**
-  * `VERIFIED` &rarr; `ALLOW` (Host transitioned to `TRUSTED`)
-  * `SPOOF_SUSPECTED` &rarr; `QUARANTINE` (Host placed in remediation sandbox, alert dispatched)
-  * `UNKNOWN_HARDWARE` &rarr; `ISOLATE` (Host moved to isolated untrusted VLAN, alert dispatched)
-  * `INSUFFICIENT_DATA` &rarr; `OBSERVE` (Host kept in observation buffer)
+## 5. Response Policy & State Machine Rules
+* **Decision:**
+  * `VERIFIED` &rarr; `ALLOW` (Host moves to `TRUSTED`)
+  * `SPOOF_SUSPECTED` &rarr; `QUARANTINE` (Host moves to `QUARANTINED`, traffic dropped/redirected)
+  * `UNKNOWN_HARDWARE` &rarr; `ISOLATE` (Host moved to isolated containment VLAN 99)
+  * `INSUFFICIENT_DATA` &rarr; `OBSERVE` (Host stays in `OBSERVING`, rate-limited monitoring)
+* **Hysteresis:** A host state changes only after **2 consecutive agreeing device-level verdicts** (configurable parameter `hysteresis=2`). This prevents flapping due to single-window burst fluctuations.
 
----
+## 6. Simulated Scenarios
+* **Decision:** Implemented 6 distinct operational scenarios:
+  1. `IMPERSONATION`: Known device X timing claiming registered device Y identity.
+  2. `UNKNOWN_HARDWARE`: Unseen hardware from 15 UNSW devices claiming a registered identity.
+  3. `TIMING_MIMICRY`: Quantile mapping towards target + Gaussian log-domain jitter (reusing logic from `src/spoof_eval.py`).
+  4. `HIJACKED_DEVICE`: Normal device transitions to foreign timing mid-session.
+  5. `REPLAY`: Recorded target traffic replayed verbatim (documented honest blind spot).
+  6. `ACCESS_ATTEMPT`: Gateway firewall default-deny demonstration (clearly labeled policy demo).
 
-### 5. Benchmark Trial Count & Determinism
-* **Default Benchmark:** 30 trials per scenario (seeded RNG for reproducible timing offsets and jitter generation).
-* **Quantile Morphing Grid:** Evaluated across strengths $s \in [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]$.
-* **True Metric Honesty:** Legitimate false-alarm rates and known blind-spots (such as identical replay attacks) are surfaced transparently in both UI and exported benchmark JSONs without suppression.
-
+## 7. Firewall Rules Generation
+* **Decision:** Generates both `iptables` and modern `nftables` commands as text only. All generated rules carry comment markers `(GENERATED TEXT ONLY - NOT APPLIED)` and are never executed against host networking stacks.

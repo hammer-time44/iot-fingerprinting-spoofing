@@ -1,0 +1,6 @@
+scenario,trials,detections,detection_rate_pct,mean_windows_to_detect,median_windows_to_detect,false_alarms,false_alarm_rate_pct,description
+BASELINE,30,0,0.0,,,0,0.0,Verified honest traffic only (5 known devices)
+IMPERSONATION,30,30,100.0,6.0,6.0,0,0.0,Cross-device MAC claim spoofing (detected via timing mismatch)
+UNKNOWN_HARDWARE,30,30,100.0,6.0,6.0,0,0.0,Unseen commercial hardware from UNSW dataset (isolated via tau)
+HIJACKED_DEVICE,30,30,100.0,2.0,2.0,0,0.0,Device compromised and swapped traffic mid-run (detected via state change)
+REPLAY,30,0,0.0,,,0,0.0,Exact recorded target traffic replayed (passes as TRUSTED; documented timing blind spot)
