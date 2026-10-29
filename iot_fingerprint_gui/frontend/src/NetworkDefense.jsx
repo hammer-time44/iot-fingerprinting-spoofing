@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
-  Shield, Activity, BarChart3, HelpCircle, Play, Pause, RotateCcw,
+  Shield, Activity, Play, Pause, RotateCcw,
   AlertTriangle, CheckCircle2, XCircle, Eye, Sliders, Terminal,
   Radio, Laptop, Skull, RefreshCw, Info, ArrowRight,
   TrendingDown, Check, ShieldAlert
@@ -61,7 +61,6 @@ function formatDeviceName(raw) {
 }
 
 export default function NetworkDefense({ globalThreshold = 0.84 }) {
-  const [activeSubTab, setActiveSubTab] = useState('livelab'); // 'livelab' | 'scoreboard' | 'howitworks'
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -337,50 +336,9 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
             Gateway-level timing analysis: 13-feature Random Forest & 3-identity verification enforcing ALLOW / QUARANTINE / ISOLATE.
           </p>
         </div>
-
-        {/* Sub-Tab Navigation */}
-        <div className="flex items-center p-1 bg-gray-100 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700 text-xs font-semibold">
-          <button
-            onClick={() => setActiveSubTab('livelab')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
-              activeSubTab === 'livelab'
-                ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            <span>Live Lab</span>
-          </button>
-
-          <button
-            onClick={() => setActiveSubTab('scoreboard')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
-              activeSubTab === 'scoreboard'
-                ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>Scoreboard</span>
-          </button>
-
-          <button
-            onClick={() => setActiveSubTab('howitworks')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
-              activeSubTab === 'howitworks'
-                ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>How It Works & Limits</span>
-          </button>
-        </div>
       </div>
 
-      {/* SUB-TAB 1: LIVE LAB */}
-      {activeSubTab === 'livelab' && (
-        <div className="space-y-6">
+      <div className="space-y-6">
           {/* SVG Topology Diagram */}
           <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xs space-y-2">
             <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-gray-800 text-xs font-bold text-gray-700 dark:text-gray-300">
@@ -900,234 +858,6 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
             </div>
           </div>
         </div>
-      )}
-
-      {/* SUB-TAB 2: SCOREBOARD */}
-      {activeSubTab === 'scoreboard' && (
-        <div className="space-y-6">
-          <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xs space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-gray-800">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-indigo-600" />
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white">
-                  30-Trial Empirical Security Benchmark Results
-                </h3>
-              </div>
-              <span className="text-[11px] font-mono text-gray-500">
-                Calibrated &tau; = {benchmark.tau || 0.84} &middot; {benchmark.n_trials || 30} Trials / Scenario
-              </span>
-            </div>
-
-            {/* Benchmark Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left">
-                <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-800 text-gray-500">
-                    <th className="py-2.5 px-3 font-semibold">Scenario</th>
-                    <th className="py-2.5 px-3 font-semibold">Trials</th>
-                    <th className="py-2.5 px-3 font-semibold">Detection Rate</th>
-                    <th className="py-2.5 px-3 font-semibold">Windows-to-Detect</th>
-                    <th className="py-2.5 px-3 font-semibold">False Alarm Rate</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800 font-medium">
-                  {benchmark.summary && Object.entries(benchmark.summary).map(([key, s]) => (
-                    <tr key={key} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
-                      <td className="py-2.5 px-3 font-bold text-gray-900 dark:text-white">
-                        {SCENARIO_LABELS[key] || key}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono">{s.trials}</td>
-                      <td className="py-2.5 px-3">
-                        <span className={`inline-block px-2 py-0.5 rounded font-mono font-bold text-[11px] ${
-                          s.detection_rate_pct >= 90
-                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                            : s.detection_rate_pct > 0
-                            ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                            : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
-                        }`}>
-                          {s.detection_rate_pct.toFixed(1)}%
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 font-mono">
-                        {s.mean_windows_to_detect ? `${s.mean_windows_to_detect.toFixed(1)} w` : 'N/A'}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono">
-                        {s.false_alarm_rate_pct !== undefined ? `${s.false_alarm_rate_pct.toFixed(1)}%` : '0.0%'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Benchmark Charts (Plain SVG) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Detection Rate Bar Chart */}
-            <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xs space-y-3">
-              <h4 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                <BarChart3 className="w-3.5 h-3.5 text-indigo-600" />
-                Detection Percentage by Attack Class
-              </h4>
-
-              <div className="space-y-2 pt-2 text-xs">
-                {benchmark.summary && Object.entries(benchmark.summary).map(([key, s]) => (
-                  <div key={key}>
-                    <div className="flex justify-between text-[11px] mb-1">
-                      <span className="font-semibold text-gray-700 dark:text-gray-300">
-                        {SCENARIO_LABELS[key] || key}
-                      </span>
-                      <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
-                        {s.detection_rate_pct.toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-100 dark:bg-gray-800 h-2.5 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          s.detection_rate_pct >= 90
-                            ? 'bg-emerald-500'
-                            : s.detection_rate_pct > 0
-                            ? 'bg-amber-500'
-                            : 'bg-rose-500'
-                        }`}
-                        style={{ width: `${Math.max(s.detection_rate_pct, 2)}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Mimicry Resistance Curve */}
-            <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xs space-y-3">
-              <h4 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                <TrendingDown className="w-3.5 h-3.5 text-indigo-600" />
-                Timing Mimicry Evasion Curve (Quantile Reshaping)
-              </h4>
-
-              <div className="w-full pt-2">
-                <svg viewBox="0 0 400 160" className="w-full h-36">
-                  <line x1="40" y1="20" x2="380" y2="20" stroke="#94a3b8" strokeOpacity="0.2" />
-                  <line x1="40" y1="70" x2="380" y2="70" stroke="#94a3b8" strokeOpacity="0.2" />
-                  <line x1="40" y1="120" x2="380" y2="120" stroke="#94a3b8" strokeOpacity="0.2" />
-
-                  <line x1="40" y1="20" x2="40" y2="120" stroke="#64748b" strokeWidth="1" />
-                  <line x1="40" y1="120" x2="380" y2="120" stroke="#64748b" strokeWidth="1" />
-
-                  <text x="32" y="24" fontSize="9" textAnchor="end" fill="#64748b">100%</text>
-                  <text x="32" y="74" fontSize="9" textAnchor="end" fill="#64748b">50%</text>
-                  <text x="32" y="124" fontSize="9" textAnchor="end" fill="#64748b">0%</text>
-
-                  {benchmark.mimicry_curve && (
-                    <>
-                      <polyline
-                        fill="none"
-                        stroke="#6366f1"
-                        strokeWidth="2.5"
-                        points={benchmark.mimicry_curve
-                          .map((pt, idx) => {
-                            const x = 50 + idx * 60;
-                            const y = 120 - (pt.detection_rate_pct / 100) * 100;
-                            return `${x},${y}`;
-                          })
-                          .join(' ')}
-                      />
-                      {benchmark.mimicry_curve.map((pt, idx) => {
-                        const x = 50 + idx * 60;
-                        const y = 120 - (pt.detection_rate_pct / 100) * 100;
-                        return (
-                          <g key={idx}>
-                            <circle cx={x} cy={y} r="3.5" fill="#4f46e5" stroke="#ffffff" strokeWidth="1.5" />
-                            <text x={x} y="136" fontSize="8" textAnchor="middle" fill="#64748b">
-                              s={pt.strength}
-                            </text>
-                          </g>
-                        );
-                      })}
-                    </>
-                  )}
-                </svg>
-              </div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                Adversary achieves evasion when quantile mapping strength exceeds s &ge; 0.9.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* SUB-TAB 3: HOW IT WORKS & LIMITS */}
-      {activeSubTab === 'howitworks' && (
-        <div className="space-y-6">
-          {/* 4-Stage Pipeline */}
-          <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xs space-y-4">
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <Activity className="w-4 h-4 text-indigo-600" />
-              The 4-Stage Passive Gateway Pipeline
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 space-y-1">
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">Stage 1</span>
-                <h4 className="font-bold text-gray-900 dark:text-white">Packet Grouping & IAT</h4>
-                <p className="text-[11px] text-gray-600 dark:text-gray-400">
-                  Packets are grouped by host (MAC / IP). Inter-arrival times are log-transformed via log1p(IAT).
-                </p>
-              </div>
-
-              <div className="p-3 rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 space-y-1">
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">Stage 2</span>
-                <h4 className="font-bold text-gray-900 dark:text-white">13 Statistical Moments</h4>
-                <p className="text-[11px] text-gray-600 dark:text-gray-400">
-                  Each 128-packet window produces 13 moments: Mean, Std, Median, Min, Max, Skew, Kurtosis, P25, P75, P95, P99, Energy, Entropy.
-                </p>
-              </div>
-
-              <div className="p-3 rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 space-y-1">
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">Stage 3</span>
-                <h4 className="font-bold text-gray-900 dark:text-white">Random Forest (100 Trees)</h4>
-                <p className="text-[11px] text-gray-600 dark:text-gray-400">
-                  Z-score normalized features are evaluated by the 100-tree ensemble to yield class probability vectors.
-                </p>
-              </div>
-
-              <div className="p-3 rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30 space-y-1">
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">Stage 4</span>
-                <h4 className="font-bold text-gray-900 dark:text-white">3-Identity Verdict Engine</h4>
-                <p className="text-[11px] text-gray-600 dark:text-gray-400">
-                  Compares Predicted Identity with Claimed Identity and threshold &tau; ({tau.toFixed(2)}) over 5-window voting.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Honest Scientific Limits Box */}
-          <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 shadow-xs space-y-3">
-            <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-white text-xs">
-              <Info className="w-4 h-4 text-indigo-600" />
-              Honest Scientific Limits & Academic Boundaries
-            </div>
-
-            <ul className="list-disc pl-5 space-y-1.5 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-              <li>
-                <strong>Closed Set of 5 Devices:</strong> The model was trained strictly on 5 registered IoT device classes. The 22 other devices in the UNSW benchmark are treated as foreign unknown hardware.
-              </li>
-              <li>
-                <strong>Timing Can Be Imitated:</strong> With quantile mapping (s &ge; 0.9), an adversary who can introduce controlled packet delays can reshape timings to bypass detection.
-              </li>
-              <li>
-                <strong>Replay Attack Blind Spot:</strong> An attacker capturing and replaying exact recorded test windows will PASS verification as TRUSTED. Timing analysis verifies behavior, not cryptographic freshness.
-              </li>
-              <li>
-                <strong>LAN Threat Realism:</strong> Remote WAN attackers cannot forge internal Layer-2 MAC addresses across routers; the realistic threat modeled is a rogue or compromised device physically on the local LAN.
-              </li>
-              <li>
-                <strong>Firewall Demo Distinction:</strong> The "External Access Attempt" scenario demonstrates the gateway's perimeter default-deny firewall policy, not a machine learning classification.
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
