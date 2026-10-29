@@ -1,5 +1,4 @@
-# IoT Device Fingerprinting from Encrypted Traffic
-
+# IoT Device Fingerprinting using IAT
 Passive identification of IoT devices from network traffic timing,
 without inspecting packet payloads or storing any local identifiers
 (MAC addresses, IP addresses).
