@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Shield, Activity, BarChart3, HelpCircle, Play, Pause, RotateCcw,
-  AlertTriangle, CheckCircle2, XCircle, Eye, Lock, Sliders, Terminal,
-  Radio, Zap, Laptop, Server, Skull, RefreshCw, Info, ArrowRight,
-  TrendingDown, Database, ExternalLink
+  AlertTriangle, CheckCircle2, XCircle, Eye, Sliders, Terminal,
+  Radio, Laptop, Skull, RefreshCw, Info, ArrowRight,
+  TrendingDown, Check, ShieldAlert
 } from 'lucide-react';
 import { ClientSimulation } from './networkDefense/simulation';
 
@@ -34,18 +34,37 @@ const VERDICT_BADGES = {
   }
 };
 
+function formatDeviceName(raw) {
+  if (!raw) return '';
+  const specialMap = {
+    AmazonEcho: 'Amazon Echo',
+    BelkinWemoMotionSensor: 'Belkin WeMo Motion',
+    PhilipsHue: 'Philips Hue',
+    SamsungCamera: 'Samsung Camera',
+    TPLinkSmartPlug: 'TP-Link Smart Plug'
+  };
+  if (specialMap[raw]) return specialMap[raw];
+  return raw
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .trim();
+}
+
 export default function NetworkDefense({ globalThreshold = 0.84 }) {
   const [activeSubTab, setActiveSubTab] = useState('livelab'); // 'livelab' | 'scoreboard' | 'howitworks'
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Simulation controls
-  const [simRunning, setSimRunning] = useState(false);
-  const [simTick, setSimTick] = useState(0);
+  // Simplified two-input state
+  const [attackerDevice, setAttackerDevice] = useState('SamsungCamera');
+  const [pretendsToBe, setPretendsToBe] = useState('AmazonEcho');
+
+  // Advanced settings state (collapsed by default)
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [manualScenarioOverride, setManualScenarioOverride] = useState(null);
   const [simSpeed, setSimSpeed] = useState(1.0);
   const [tau, setTau] = useState(globalThreshold);
-  const [activeScenario, setActiveScenario] = useState('IMPERSONATION');
   const [scenarioParams, setScenarioParams] = useState({
     source_device: 'SamsungCamera',
     claimed_device: 'AmazonEcho',
@@ -55,13 +74,50 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
     hijack_device: 'SamsungCamera'
   });
 
-  // Live state
+  // Simulation execution state
+  const [simRunning, setSimRunning] = useState(false);
+  const [simTick, setSimTick] = useState(0);
   const [hosts, setHosts] = useState({});
   const [events, setEvents] = useState([]);
   const [selectedHostId, setSelectedHostId] = useState('host-echo');
   const [ruleFormat, setRuleFormat] = useState('iptables'); // 'iptables' | 'nftables'
 
   const simRef = useRef(null);
+
+  const classes = data?.meta?.classes || ['AmazonEcho', 'BelkinWemoMotionSensor', 'PhilipsHue', 'SamsungCamera', 'TPLinkSmartPlug'];
+  const unseenList = data?.unseen ? Object.keys(data.unseen) : [];
+  const benchmark = data?.benchmark || {};
+
+  // Inferred scenario mapping
+  const inferredScenario = useMemo(() => {
+    if (manualScenarioOverride) return manualScenarioOverride;
+    const isRegistered = classes.includes(attackerDevice);
+    if (!isRegistered) {
+      return 'UNKNOWN_HARDWARE';
+    }
+    if (attackerDevice === pretendsToBe) {
+      return 'GENUINE_CONTROL';
+    }
+    return 'IMPERSONATION';
+  }, [attackerDevice, pretendsToBe, classes, manualScenarioOverride]);
+
+  // Live one-line plain-English sentence
+  const helperSentence = useMemo(() => {
+    if (manualScenarioOverride && manualScenarioOverride !== 'IMPERSONATION' && manualScenarioOverride !== 'UNKNOWN_HARDWARE' && manualScenarioOverride !== 'GENUINE_CONTROL') {
+      const titles = {
+        TIMING_MIMICRY: `Timing Mimicry: ${formatDeviceName(attackerDevice)} reshapes traffic toward ${formatDeviceName(pretendsToBe)} (strength ${(scenarioParams.strength || 0.6).toFixed(1)}).`,
+        HIJACKED_DEVICE: `Compromised Device: ${formatDeviceName(pretendsToBe)} starts authentic, then transitions to compromised traffic at tick ${scenarioParams.hijack_at_tick || 5}.`,
+        REPLAY: `Replay Attack: Replaying recorded authentic traffic of ${formatDeviceName(pretendsToBe)}.`,
+        ACCESS_ATTEMPT: `External Probe: WAN attacker probes LAN hosts; blocked by default-deny perimeter firewall.`
+      };
+      return titles[manualScenarioOverride] || `Advanced scenario: ${manualScenarioOverride}`;
+    }
+
+    if (attackerDevice === pretendsToBe) {
+      return `${formatDeviceName(attackerDevice)} is genuine and claims its own identity.`;
+    }
+    return `${formatDeviceName(attackerDevice)} will pretend to be ${formatDeviceName(pretendsToBe)}.`;
+  }, [attackerDevice, pretendsToBe, manualScenarioOverride, scenarioParams]);
 
   // Load static data
   useEffect(() => {
@@ -74,8 +130,7 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
       .then((d) => {
         setData(d);
         if (d.meta?.tau) setTau(d.meta.tau);
-        
-        // Initialize client simulation engine
+
         const engine = new ClientSimulation(d, (tickResult) => {
           setSimTick(tickResult.tick);
           setHosts(tickResult.hosts);
@@ -98,7 +153,7 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
     };
   }, []);
 
-  // Update tau
+  // Sync tau
   useEffect(() => {
     if (simRef.current) {
       simRef.current.setTau(tau);
@@ -108,7 +163,19 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
   // Handle simulation actions
   const handleStart = () => {
     if (!simRef.current) return;
-    simRef.current.setScenario(activeScenario, scenarioParams);
+
+    let params = { ...scenarioParams };
+    const isRegistered = classes.includes(attackerDevice);
+
+    if (inferredScenario === 'UNKNOWN_HARDWARE') {
+      params = { ...params, unseen_device: attackerDevice, claimed_device: pretendsToBe };
+    } else if (inferredScenario === 'GENUINE_CONTROL') {
+      params = { ...params, source_device: attackerDevice, claimed_device: attackerDevice };
+    } else if (inferredScenario === 'IMPERSONATION') {
+      params = { ...params, source_device: attackerDevice, claimed_device: pretendsToBe };
+    }
+
+    simRef.current.setScenario(inferredScenario, params);
     simRef.current.setSpeed(simSpeed);
     simRef.current.start();
     setSimRunning(true);
@@ -137,9 +204,90 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
   };
 
   const selectedHost = hosts[selectedHostId] || Object.values(hosts)[0];
-  const classes = data?.meta?.classes || ['AmazonEcho', 'BelkinWemoMotionSensor', 'PhilipsHue', 'SamsungCamera', 'TPLinkSmartPlug'];
-  const unseenList = data?.unseen ? Object.keys(data.unseen) : [];
-  const benchmark = data?.benchmark || {};
+  const attackerHost = hosts['host-attacker-1'];
+  const monitoredHost = attackerHost || selectedHost;
+
+  // Derive Result Card state
+  const resultCardData = useMemo(() => {
+    if (!monitoredHost || (simTick === 0 && !simRunning)) {
+      return {
+        status: 'ready',
+        headline: 'Ready to test',
+        detail: 'Choose an attacking device and claimed identity, then click Start attack.',
+        badge: 'IDLE',
+        badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700',
+        windowCount: 0
+      };
+    }
+
+    const windowCount = monitoredHost.window_count || 0;
+
+    if (windowCount < 5) {
+      return {
+        status: 'watching',
+        headline: `Watching... (${windowCount} of 5 windows)`,
+        detail: 'Accumulating 128-packet timing windows for multi-window device verdict.',
+        badge: 'OBSERVING',
+        badgeClass: 'bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700',
+        windowCount
+      };
+    }
+
+    const verdict = monitoredHost.device_level_verdict;
+    const isGenuine = attackerDevice === pretendsToBe && classes.includes(attackerDevice);
+
+    if (verdict === 'SPOOF_SUSPECTED') {
+      return {
+        status: 'spoof',
+        headline: 'Attack detected: this device is not who it claims to be',
+        detail: `Technical verdict: SPOOF_SUSPECTED · Action: QUARANTINE · Detected after ${windowCount} windows.`,
+        badge: 'QUARANTINED',
+        badgeClass: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200 border-amber-300 dark:border-amber-800',
+        windowCount
+      };
+    }
+
+    if (verdict === 'UNKNOWN_HARDWARE') {
+      return {
+        status: 'unknown',
+        headline: 'Unknown device detected: it does not match any registered device',
+        detail: `Technical verdict: UNKNOWN_HARDWARE · Action: ISOLATE · Detected after ${windowCount} windows.`,
+        badge: 'ISOLATED',
+        badgeClass: 'bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200 border-rose-300 dark:border-rose-800',
+        windowCount
+      };
+    }
+
+    if (verdict === 'VERIFIED') {
+      if (isGenuine) {
+        return {
+          status: 'genuine',
+          headline: 'Genuine device confirmed',
+          detail: `Technical verdict: VERIFIED · Action: ALLOW · Confirmed after ${windowCount} windows.`,
+          badge: 'TRUSTED',
+          badgeClass: 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800',
+          windowCount
+        };
+      }
+      return {
+        status: 'evaded',
+        headline: 'Not detected: the traffic looks like the claimed device',
+        detail: `Technical verdict: VERIFIED · Action: ALLOW · Observed ${windowCount} windows. Timing alone can sometimes be imitated.`,
+        badge: 'TRUSTED',
+        badgeClass: 'bg-indigo-100 text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 border-indigo-300 dark:border-indigo-800',
+        windowCount
+      };
+    }
+
+    return {
+      status: 'evaluating',
+      headline: `Evaluating traffic... (${windowCount} windows)`,
+      detail: `Current verdict: ${verdict || 'Awaiting consensus'}`,
+      badge: verdict || 'EVALUATING',
+      badgeClass: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700',
+      windowCount
+    };
+  }, [monitoredHost, simTick, simRunning, attackerDevice, pretendsToBe, classes]);
 
   if (loading) {
     return (
@@ -180,7 +328,7 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
           </p>
         </div>
 
-        {/* Sub-Tab Navigation Buttons */}
+        {/* Sub-Tab Navigation */}
         <div className="flex items-center p-1 bg-gray-100 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700 text-xs font-semibold">
           <button
             onClick={() => setActiveSubTab('livelab')}
@@ -223,201 +371,6 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
       {/* SUB-TAB 1: LIVE LAB */}
       {activeSubTab === 'livelab' && (
         <div className="space-y-6">
-          {/* Controls & Scenario Toolbar */}
-          <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xs space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                  Simulation Scenario Controls
-                </span>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                  Tick: {simTick}
-                </span>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
-                {!simRunning ? (
-                  <button
-                    onClick={handleStart}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs cursor-pointer transition-colors"
-                  >
-                    <Play className="w-3.5 h-3.5" />
-                    <span>Start Scenario</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={handlePause}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs cursor-pointer transition-colors"
-                  >
-                    <Pause className="w-3.5 h-3.5" />
-                    <span>Pause</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={handleReset}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reset</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Scenario Dropdown & Parameters */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div>
-                <label className="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Security Scenario:
-                </label>
-                <select
-                  value={activeScenario}
-                  onChange={(e) => {
-                    setActiveScenario(e.target.value);
-                    if (simRef.current) simRef.current.setScenario(e.target.value, scenarioParams);
-                  }}
-                  className="w-full px-2.5 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
-                >
-                  <option value="IMPERSONATION">1. Impersonation (Known Rogue)</option>
-                  <option value="UNKNOWN_HARDWARE">2. Unknown Hardware (Unseen IoT)</option>
-                  <option value="TIMING_MIMICRY">3. Timing Mimicry (Quantile Mapping)</option>
-                  <option value="HIJACKED_DEVICE">4. Compromised Device (Mid-Stream)</option>
-                  <option value="REPLAY">5. Replay Attack (Known Blind Spot)</option>
-                  <option value="ACCESS_ATTEMPT">6. External Probe (Firewall Demo)</option>
-                </select>
-              </div>
-
-              {/* Dynamic Parameter 1 */}
-              {activeScenario === 'IMPERSONATION' && (
-                <>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      Attacker Hardware:
-                    </label>
-                    <select
-                      value={scenarioParams.source_device}
-                      onChange={(e) => setScenarioParams({ ...scenarioParams, source_device: e.target.value })}
-                      className="w-full px-2.5 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    >
-                      {classes.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      Claimed Identity:
-                    </label>
-                    <select
-                      value={scenarioParams.claimed_device}
-                      onChange={(e) => setScenarioParams({ ...scenarioParams, claimed_device: e.target.value })}
-                      className="w-full px-2.5 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    >
-                      {classes.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-                </>
-              )}
-
-              {activeScenario === 'UNKNOWN_HARDWARE' && (
-                <>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      Unseen Foreign Device:
-                    </label>
-                    <select
-                      value={scenarioParams.unseen_device}
-                      onChange={(e) => setScenarioParams({ ...scenarioParams, unseen_device: e.target.value })}
-                      className="w-full px-2.5 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    >
-                      {unseenList.map((u) => (
-                        <option key={u} value={u}>{u}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      Claimed Identity:
-                    </label>
-                    <select
-                      value={scenarioParams.claimed_device}
-                      onChange={(e) => setScenarioParams({ ...scenarioParams, claimed_device: e.target.value })}
-                      className="w-full px-2.5 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    >
-                      {classes.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-                </>
-              )}
-
-              {activeScenario === 'TIMING_MIMICRY' && (
-                <div>
-                  <div className="flex justify-between text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    <span>Quantile Strength (s):</span>
-                    <span className="font-mono text-indigo-600 dark:text-indigo-400">
-                      {(scenarioParams.strength || 0.6).toFixed(1)}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0.0"
-                    max="1.0"
-                    step="0.2"
-                    value={scenarioParams.strength || 0.6}
-                    onChange={(e) => setScenarioParams({ ...scenarioParams, strength: parseFloat(e.target.value) })}
-                    className="w-full accent-indigo-600 cursor-pointer"
-                  />
-                </div>
-              )}
-
-              {/* Tau Threshold Slider */}
-              <div>
-                <div className="flex justify-between text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  <span>Confidence Threshold (&tau;):</span>
-                  <span className="font-mono text-indigo-600 dark:text-indigo-400">{tau.toFixed(2)}</span>
-                </div>
-                <input
-                  type="range"
-                  min="0.50"
-                  max="0.95"
-                  step="0.01"
-                  value={tau}
-                  onChange={(e) => setTau(parseFloat(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
-                />
-              </div>
-
-              {/* Speed Controller */}
-              <div>
-                <div className="flex justify-between text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  <span>Replay Speed:</span>
-                  <span className="font-mono text-indigo-600 dark:text-indigo-400">{simSpeed}x</span>
-                </div>
-                <div className="flex gap-1.5">
-                  {[0.5, 1.0, 2.0, 4.0].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => handleSpeedChange(s)}
-                      className={`flex-1 py-1 rounded text-[11px] font-bold border transition-colors ${
-                        simSpeed === s
-                          ? 'bg-indigo-600 text-white border-indigo-600'
-                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                      }`}
-                    >
-                      {s}x
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* SVG Topology Diagram */}
           <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xs space-y-2">
             <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-gray-800 text-xs font-bold text-gray-700 dark:text-gray-300">
@@ -457,10 +410,10 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                   <circle cx="35" cy="35" r="26" fill="#fecdd3" stroke="#e11d48" strokeWidth="2" />
                   <Skull className="w-6 h-6 text-rose-600" x="23" y="23" />
                   <text x="35" y="75" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#881337">
-                    {activeScenario === 'ACCESS_ATTEMPT' ? 'Remote Scanner' : 'Rogue Attacker'}
+                    {inferredScenario === 'ACCESS_ATTEMPT' ? 'Remote Scanner' : 'Rogue Host'}
                   </text>
                   <text x="35" y="88" textAnchor="middle" fontSize="8" fill="#9f1239">
-                    {activeScenario === 'ACCESS_ATTEMPT' ? 'WAN: 198.51.100.42' : '192.168.1.200'}
+                    {inferredScenario === 'ACCESS_ATTEMPT' ? 'WAN: 198.51.100.42' : '192.168.1.200'}
                   </text>
                 </g>
 
@@ -474,11 +427,11 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
 
                 {/* Home LAN Nodes (5 Devices) */}
                 {[
-                  { id: 'host-echo', name: 'Echo Dot', x: 480, y: 55, color: '#10b981' },
-                  { id: 'host-wemo', name: 'WeMo Motion', x: 555, y: 110, color: '#10b981' },
-                  { id: 'host-hue', name: 'Hue Bridge', x: 635, y: 55, color: '#10b981' },
-                  { id: 'host-camera', name: 'SmartCam', x: 715, y: 110, color: '#10b981' },
-                  { id: 'host-plug', name: 'Smart Plug', x: 795, y: 55, color: '#10b981' }
+                  { id: 'host-echo', name: 'Echo Dot', x: 480, y: 55 },
+                  { id: 'host-wemo', name: 'WeMo Motion', x: 555, y: 110 },
+                  { id: 'host-hue', name: 'Hue Bridge', x: 635, y: 55 },
+                  { id: 'host-camera', name: 'SmartCam', x: 715, y: 110 },
+                  { id: 'host-plug', name: 'Smart Plug', x: 795, y: 55 }
                 ].map((node) => {
                   const h = hosts[node.id];
                   let stateColor = '#10b981';
@@ -502,6 +455,261 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                 })}
               </svg>
             </div>
+          </div>
+
+          {/* SIMPLIFIED TWO-INPUT ATTACK CONTROLS */}
+          <div className="p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3.5 items-end">
+              {/* Input 1: Attacking device */}
+              <div className="sm:col-span-1 lg:col-span-5 space-y-1.5">
+                <label htmlFor="attacking-device" className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Attacking device
+                </label>
+                <select
+                  id="attacking-device"
+                  value={attackerDevice}
+                  onChange={(e) => {
+                    setAttackerDevice(e.target.value);
+                    setManualScenarioOverride(null);
+                  }}
+                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                >
+                  <optgroup label="Registered devices (5)">
+                    {classes.map((cls) => (
+                      <option key={cls} value={cls}>{formatDeviceName(cls)}</option>
+                    ))}
+                  </optgroup>
+                  {unseenList.length > 0 && (
+                    <optgroup label={`Unknown devices (${unseenList.length})`}>
+                      {unseenList.map((u) => (
+                        <option key={u} value={u}>{formatDeviceName(u)}</option>
+                      ))}
+                    </optgroup>
+                  )}
+                </select>
+              </div>
+
+              {/* Input 2: Pretends to be */}
+              <div className="sm:col-span-1 lg:col-span-4 space-y-1.5">
+                <label htmlFor="pretends-to-be" className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Pretends to be
+                </label>
+                <select
+                  id="pretends-to-be"
+                  value={pretendsToBe}
+                  onChange={(e) => {
+                    setPretendsToBe(e.target.value);
+                    setManualScenarioOverride(null);
+                  }}
+                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                >
+                  {classes.map((cls) => (
+                    <option key={cls} value={cls}>{formatDeviceName(cls)}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Action Buttons: Start attack & Reset */}
+              <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center gap-2">
+                {!simRunning ? (
+                  <button
+                    type="button"
+                    onClick={handleStart}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs cursor-pointer transition-colors"
+                  >
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>Start attack</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handlePause}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs cursor-pointer transition-colors"
+                  >
+                    <Pause className="w-4 h-4" />
+                    <span>Pause</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="px-3 py-2 rounded-lg text-xs sm:text-sm font-bold border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors flex items-center justify-center"
+                  title="Reset simulation"
+                  aria-label="Reset simulation"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Live Helper Sentence */}
+            <div className="text-xs text-gray-600 dark:text-gray-400 font-medium flex items-center gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+              <Info className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+              <span id="attacker-sentence">{helperSentence}</span>
+            </div>
+
+            {/* Collapsed Advanced Settings Accordion */}
+            <details
+              id="advanced-settings"
+              className="pt-2 border-t border-gray-100 dark:border-gray-800 text-xs"
+              open={isAdvancedOpen}
+              onToggle={(e) => setIsAdvancedOpen(e.currentTarget.open)}
+            >
+              <summary
+                id="advanced-settings-toggle"
+                className="font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-gray-200 cursor-pointer select-none flex items-center gap-1.5 py-1"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>Advanced settings</span>
+                <span className="text-[10px] text-gray-400 font-normal hidden sm:inline">
+                  (override scenario, mimicry strength, speed, &tau; threshold)
+                </span>
+              </summary>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3">
+                {/* Manual Scenario Override */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
+                    Scenario Override:
+                  </label>
+                  <select
+                    id="manual-scenario-select"
+                    value={manualScenarioOverride || inferredScenario}
+                    onChange={(e) => {
+                      setManualScenarioOverride(e.target.value);
+                      if (simRef.current) simRef.current.setScenario(e.target.value, scenarioParams);
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
+                  >
+                    <option value="IMPERSONATION">1. Impersonation (Known Rogue)</option>
+                    <option value="UNKNOWN_HARDWARE">2. Unknown Hardware (Unseen IoT)</option>
+                    <option value="TIMING_MIMICRY">3. Timing Mimicry (Quantile Mapping)</option>
+                    <option value="HIJACKED_DEVICE">4. Compromised Device (Mid-Stream)</option>
+                    <option value="REPLAY">5. Replay Attack (Known Blind Spot)</option>
+                    <option value="ACCESS_ATTEMPT">6. External Probe (Firewall Demo)</option>
+                  </select>
+                </div>
+
+                {/* Mimicry Strength */}
+                <div>
+                  <div className="flex justify-between text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
+                    <span>Quantile Strength (s):</span>
+                    <span className="font-mono text-indigo-600 dark:text-indigo-400">
+                      {(scenarioParams.strength || 0.6).toFixed(1)}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.0"
+                    max="1.0"
+                    step="0.2"
+                    value={scenarioParams.strength || 0.6}
+                    onChange={(e) => setScenarioParams({ ...scenarioParams, strength: parseFloat(e.target.value) })}
+                    className="w-full accent-indigo-600 cursor-pointer"
+                  />
+                </div>
+
+                {/* Tau Threshold Slider */}
+                <div>
+                  <div className="flex justify-between text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
+                    <span>Threshold (&tau;):</span>
+                    <span className="font-mono text-indigo-600 dark:text-indigo-400">{tau.toFixed(2)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.50"
+                    max="0.95"
+                    step="0.01"
+                    value={tau}
+                    onChange={(e) => setTau(parseFloat(e.target.value))}
+                    className="w-full accent-indigo-600 cursor-pointer"
+                  />
+                </div>
+
+                {/* Speed Controller */}
+                <div>
+                  <div className="flex justify-between text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">
+                    <span>Replay Speed:</span>
+                    <span className="font-mono text-indigo-600 dark:text-indigo-400">{simSpeed}x</span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {[0.5, 1.0, 2.0, 4.0].map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => handleSpeedChange(s)}
+                        className={`flex-1 py-1 rounded text-[11px] font-bold border transition-colors ${
+                          simSpeed === s
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        {s}x
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          {/* PROMINENT SIMPLE RESULT CARD */}
+          <div
+            className={`p-4 sm:p-5 rounded-xl border transition-all shadow-xs ${
+              resultCardData.status === 'spoof'
+                ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 text-amber-950 dark:text-amber-100'
+                : resultCardData.status === 'unknown'
+                ? 'bg-rose-50/70 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-950 dark:text-rose-100'
+                : resultCardData.status === 'genuine'
+                ? 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100'
+                : resultCardData.status === 'evaded'
+                ? 'bg-indigo-50/70 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-800 text-indigo-950 dark:text-indigo-100'
+                : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-100'
+            }`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  {resultCardData.status === 'spoof' && <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0" />}
+                  {resultCardData.status === 'unknown' && <XCircle className="w-5 h-5 text-rose-600 shrink-0" />}
+                  {resultCardData.status === 'genuine' && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />}
+                  {resultCardData.status === 'evaded' && <AlertTriangle className="w-5 h-5 text-indigo-600 shrink-0" />}
+                  {resultCardData.status === 'watching' && <Activity className="w-5 h-5 text-indigo-600 animate-pulse shrink-0" />}
+                  {resultCardData.status === 'ready' && <Shield className="w-5 h-5 text-slate-500 shrink-0" />}
+
+                  <h3 className="text-sm sm:text-base font-bold tracking-tight">
+                    {resultCardData.headline}
+                  </h3>
+                </div>
+
+                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                  {resultCardData.detail}
+                </p>
+              </div>
+
+              {/* Status Badge & Observation Progress */}
+              <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${resultCardData.badgeClass}`}>
+                  {resultCardData.badge}
+                </span>
+                {simTick > 0 && (
+                  <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400">
+                    Tick {simTick}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Watching Progress Bar */}
+            {resultCardData.status === 'watching' && (
+              <div className="mt-3 w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-indigo-600 dark:bg-indigo-400 transition-all duration-300"
+                  style={{ width: `${Math.min((resultCardData.windowCount / 5) * 100, 100)}%` }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Host Cards Grid */}
@@ -534,7 +742,7 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                         <h4 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
                           {h.display_name}
                           {h.id.startsWith('host-attacker') && (
-                            <span className="text-[9px] px-1 rounded bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">ROGUE</span>
+                            <span className="text-[9px] px-1 rounded bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">TEST</span>
                           )}
                         </h4>
                         <p className="text-[10px] font-mono text-gray-500 dark:text-gray-400">
@@ -551,13 +759,13 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                     <div className="space-y-2 text-xs pt-2 border-t border-gray-100 dark:border-gray-800/80">
                       <div className="flex justify-between text-[11px]">
                         <span className="text-gray-500">Claimed:</span>
-                        <span className="font-semibold">{h.claimed_device}</span>
+                        <span className="font-semibold">{formatDeviceName(h.claimed_device)}</span>
                       </div>
 
                       <div className="flex justify-between text-[11px]">
                         <span className="text-gray-500">Predicted (5-Win):</span>
                         <span className="font-semibold text-indigo-600 dark:text-indigo-400">
-                          {h.predicted_device || 'Evaluating...'}
+                          {formatDeviceName(h.predicted_device) || 'Evaluating...'}
                         </span>
                       </div>
 
@@ -617,6 +825,7 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                   {['iptables', 'nftables'].map((fmt) => (
                     <button
                       key={fmt}
+                      type="button"
                       onClick={() => setRuleFormat(fmt)}
                       className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold border ${
                         ruleFormat === fmt
@@ -653,7 +862,7 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
               <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                 {events.length === 0 ? (
                   <div className="text-center py-8 text-xs text-gray-500 dark:text-gray-400">
-                    No state transitions yet. Start simulation scenario above to observe gateway reactions.
+                    No state transitions yet. Start attack scenario above to observe gateway reactions.
                   </div>
                 ) : (
                   events.map((ev, idx) => (
@@ -663,7 +872,7 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-gray-800 dark:text-gray-200">
-                          {ev.host_name} ({ev.claimed_device})
+                          {ev.host_name} ({formatDeviceName(ev.claimed_device)})
                         </span>
                         <span className="text-[10px] font-mono text-gray-400">{ev.timestamp}</span>
                       </div>
@@ -784,21 +993,17 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
 
               <div className="w-full pt-2">
                 <svg viewBox="0 0 400 160" className="w-full h-36">
-                  {/* Grid lines */}
                   <line x1="40" y1="20" x2="380" y2="20" stroke="#94a3b8" strokeOpacity="0.2" />
                   <line x1="40" y1="70" x2="380" y2="70" stroke="#94a3b8" strokeOpacity="0.2" />
                   <line x1="40" y1="120" x2="380" y2="120" stroke="#94a3b8" strokeOpacity="0.2" />
 
-                  {/* Axes */}
                   <line x1="40" y1="20" x2="40" y2="120" stroke="#64748b" strokeWidth="1" />
                   <line x1="40" y1="120" x2="380" y2="120" stroke="#64748b" strokeWidth="1" />
 
-                  {/* Y Axis Labels */}
                   <text x="32" y="24" fontSize="9" textAnchor="end" fill="#64748b">100%</text>
                   <text x="32" y="74" fontSize="9" textAnchor="end" fill="#64748b">50%</text>
                   <text x="32" y="124" fontSize="9" textAnchor="end" fill="#64748b">0%</text>
 
-                  {/* Points from mimicry_curve */}
                   {benchmark.mimicry_curve && (
                     <>
                       <polyline
@@ -912,4 +1117,3 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
     </div>
   );
 }
-

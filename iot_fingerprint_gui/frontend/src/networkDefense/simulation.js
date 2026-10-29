@@ -66,9 +66,11 @@ export class ClientSimulation {
     });
 
     // If scenario includes rogue host, instantiate attacker
-    if (this.scenario === 'IMPERSONATION' || this.scenario === 'UNKNOWN_HARDWARE' || this.scenario === 'TIMING_MIMICRY' || this.scenario === 'REPLAY') {
+    if (this.scenario === 'IMPERSONATION' || this.scenario === 'UNKNOWN_HARDWARE' || this.scenario === 'TIMING_MIMICRY' || this.scenario === 'REPLAY' || this.scenario === 'GENUINE_CONTROL') {
       const attId = 'host-attacker-1';
       const claimedDev = this.scenarioParams.claimed_device || 'AmazonEcho';
+      const isGenuine = this.scenario === 'GENUINE_CONTROL' || (this.scenario === 'IMPERSONATION' && this.scenarioParams.source_device === claimedDev);
+
       this.stateMachines[attId] = new HostStateMachine({
         hostId: attId,
         claimedDevice: claimedDev,
@@ -79,7 +81,7 @@ export class ClientSimulation {
       this.hostWindowPointers[attId] = 0;
       this.hosts[attId] = {
         id: attId,
-        display_name: 'Attacker Rogue Host',
+        display_name: isGenuine ? `${claimedDev} (Genuine Control)` : 'Attacker Rogue Host',
         ip: '192.168.1.200',
         mac: 'DE:AD:BE:EF:00:01',
         claimed_device: claimedDev,
@@ -156,7 +158,7 @@ export class ClientSimulation {
 
       // Select window source based on scenario and host
       if (hostId.startsWith('host-attacker')) {
-        if (this.scenario === 'IMPERSONATION') {
+        if (this.scenario === 'IMPERSONATION' || this.scenario === 'GENUINE_CONTROL') {
           const srcDev = this.scenarioParams.source_device || 'SamsungCamera';
           const list = this.masterData.legit?.[srcDev] || [];
           if (list.length > 0) {
