@@ -282,3 +282,4 @@ Examiners value honesty about limitations. Here are the core academic boundaries
 > **Answer:** Yes, in two ways:
 > 1. By executing an exact **replay attack** with previously recorded packets (since timing analysis verifies behavior, not freshness).
 > 2. By implementing **quantile mapping** with strength $s \ge 0.9$, artificially buffering and delaying packets to closely match the target's timing distribution. This proves that timing analysis is an orthogonal defense-in-depth layer, best combined with cryptographic authentication.
+
