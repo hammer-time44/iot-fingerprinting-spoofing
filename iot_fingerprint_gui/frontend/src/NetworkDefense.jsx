@@ -34,6 +34,16 @@ const VERDICT_BADGES = {
   }
 };
 
+const SCENARIO_LABELS = {
+  IMPERSONATION: 'Fake Device (Stolen Identity)',
+  UNKNOWN_HARDWARE: 'Unregistered Device',
+  TIMING_MIMICRY: 'Timing Copycat',
+  HIJACKED_DEVICE: 'Infected Device (Malware)',
+  REPLAY: 'Recorded Traffic Playback',
+  ACCESS_ATTEMPT: 'Outside Internet Hacker',
+  BASELINE: 'Normal Traffic (No Attack)'
+};
+
 function formatDeviceName(raw) {
   if (!raw) return '';
   const specialMap = {
@@ -105,10 +115,10 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
   const helperSentence = useMemo(() => {
     if (manualScenarioOverride && manualScenarioOverride !== 'IMPERSONATION' && manualScenarioOverride !== 'UNKNOWN_HARDWARE' && manualScenarioOverride !== 'GENUINE_CONTROL') {
       const titles = {
-        TIMING_MIMICRY: `Timing Mimicry: ${formatDeviceName(attackerDevice)} reshapes traffic toward ${formatDeviceName(pretendsToBe)} (strength ${(scenarioParams.strength || 0.6).toFixed(1)}).`,
-        HIJACKED_DEVICE: `Compromised Device: ${formatDeviceName(pretendsToBe)} starts authentic, then transitions to compromised traffic at tick ${scenarioParams.hijack_at_tick || 5}.`,
-        REPLAY: `Replay Attack: Replaying recorded authentic traffic of ${formatDeviceName(pretendsToBe)}.`,
-        ACCESS_ATTEMPT: `External Probe: WAN attacker probes LAN hosts; blocked by default-deny perimeter firewall.`
+        TIMING_MIMICRY: `Timing Copycat: ${formatDeviceName(attackerDevice)} mimics packet timing of ${formatDeviceName(pretendsToBe)} (strength ${(scenarioParams.strength || 0.6).toFixed(1)}).`,
+        HIJACKED_DEVICE: `Infected Device (Compromised Device): ${formatDeviceName(pretendsToBe)} starts authentic, then transitions to compromised traffic at tick ${scenarioParams.hijack_at_tick || 5}.`,
+        REPLAY: `Recorded Traffic Playback: Replaying previously recorded legitimate traffic of ${formatDeviceName(pretendsToBe)}.`,
+        ACCESS_ATTEMPT: `Outside Internet Hacker: Remote scanner probes LAN ports; blocked at gateway firewall.`
       };
       return titles[manualScenarioOverride] || `Advanced scenario: ${manualScenarioOverride}`;
     }
@@ -582,12 +592,12 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                     }}
                     className="w-full px-2.5 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
                   >
-                    <option value="IMPERSONATION">1. Impersonation (Known Rogue)</option>
-                    <option value="UNKNOWN_HARDWARE">2. Unknown Hardware (Unseen IoT)</option>
-                    <option value="TIMING_MIMICRY">3. Timing Mimicry (Quantile Mapping)</option>
-                    <option value="HIJACKED_DEVICE">4. Compromised Device (Mid-Stream)</option>
-                    <option value="REPLAY">5. Replay Attack (Known Blind Spot)</option>
-                    <option value="ACCESS_ATTEMPT">6. External Probe (Firewall Demo)</option>
+                    <option value="IMPERSONATION">1. Fake Device (Stolen Identity)</option>
+                    <option value="UNKNOWN_HARDWARE">2. Unregistered Device</option>
+                    <option value="TIMING_MIMICRY">3. Timing Copycat</option>
+                    <option value="HIJACKED_DEVICE">4. Infected Device (Malware)</option>
+                    <option value="REPLAY">5. Recorded Traffic Playback</option>
+                    <option value="ACCESS_ATTEMPT">6. Outside Internet Hacker</option>
                   </select>
                 </div>
 
@@ -923,7 +933,9 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800 font-medium">
                   {benchmark.summary && Object.entries(benchmark.summary).map(([key, s]) => (
                     <tr key={key} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
-                      <td className="py-2.5 px-3 font-bold text-gray-900 dark:text-white">{key}</td>
+                      <td className="py-2.5 px-3 font-bold text-gray-900 dark:text-white">
+                        {SCENARIO_LABELS[key] || key}
+                      </td>
                       <td className="py-2.5 px-3 font-mono">{s.trials}</td>
                       <td className="py-2.5 px-3">
                         <span className={`inline-block px-2 py-0.5 rounded font-mono font-bold text-[11px] ${
@@ -962,7 +974,9 @@ export default function NetworkDefense({ globalThreshold = 0.84 }) {
                 {benchmark.summary && Object.entries(benchmark.summary).map(([key, s]) => (
                   <div key={key}>
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="font-semibold text-gray-700 dark:text-gray-300">{key}</span>
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">
+                        {SCENARIO_LABELS[key] || key}
+                      </span>
                       <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
                         {s.detection_rate_pct.toFixed(1)}%
                       </span>
