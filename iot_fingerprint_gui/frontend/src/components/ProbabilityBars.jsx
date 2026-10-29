@@ -30,10 +30,8 @@ export default function ProbabilityBars({ probs = {}, dominant = '' }) {
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-300 rounded-full ${
-                  isTop ? 'bg-indigo-600 dark:bg-indigo-500 shadow-sm' : 'bg-slate-300 dark:bg-slate-600'
-                }`}
-                style={{ width: `${Math.max(p * 100, 1)}%` }}
+                className="h-full transition-all duration-300 rounded-full bg-indigo-600 dark:bg-indigo-500 shadow-sm"
+                style={{ width: `${p > 0 ? Math.max(p * 100, 1) : 0}%` }}
               />
             </div>
           </div>
