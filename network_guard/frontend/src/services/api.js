@@ -100,3 +100,4 @@ export async function getFullReport() {
   if (!res.ok) throw new Error('Failed to load report');
   return await res.json();
 }
+

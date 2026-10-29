@@ -47,3 +47,4 @@ This log documents every architectural assumption, design default, and fallback 
 
 ## 7. Firewall Rules Generation
 * **Decision:** Generates both `iptables` and modern `nftables` commands as text only. All generated rules carry comment markers `(GENERATED TEXT ONLY - NOT APPLIED)` and are never executed against host networking stacks.
+

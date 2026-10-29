@@ -146,3 +146,4 @@ flowchart TD
 | Live Stream | `WS /ws/events` | WebSocket JSON | Pushes tick events, per-host verdicts, and firewall rules |
 | Benchmark | `POST /benchmark/run` | HTTP JSON | Executes N-trial batch statistical suite |
 | Full Report | `GET /report` | HTTP JSON | Aggregated system status, metrics, and logs |
+

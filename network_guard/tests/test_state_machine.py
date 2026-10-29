@@ -108,3 +108,4 @@ def test_five_window_aggregation():
     assert dev_res2["verdict"] == "VERIFIED"
     assert dev_res2["window_count"] == 5
     assert dev_res2["confidence"] > 0.84
+

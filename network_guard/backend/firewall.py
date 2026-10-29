@@ -99,3 +99,4 @@ def generate_firewall_rules(
         "nftables": nftables,
         "summary": summary
     }
+

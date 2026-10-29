@@ -121,3 +121,4 @@ The Network Defense Lab strictly respects the host project:
 - **Read-Only Access**: Loads trained model weights (`results/step7_*/rf*model.pkl`), scalers (`results/raw_stat_scaler.pkl`), and test-split features (`data/features/raw_scaled_test.csv`) without modification.
 - **Strict Isolation**: All newly authored code, dependencies, artifacts, and documentation reside exclusively inside `network_guard/`.
 - **Integrity Proof**: A cryptographic SHA-256 hash manifest recorded prior to development is verified upon completion in `network_guard/docs/isolation_proof.txt`.
+

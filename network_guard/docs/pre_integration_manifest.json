@@ -1,0 +1,892 @@
+{
+  ".gitignore": {
+    "size": 179,
+    "mtime": 1793001946.0720696,
+    "sha256": "b86be72e0b1eb01fbd05faca77c00edc2a4d6462eecbd4d7657179f09d8ca30f"
+  },
+  "app.py": {
+    "size": 69462,
+    "mtime": 1793022231.1662529,
+    "sha256": "2498f50289ffbe67a02fc77af3cec5ad22a45271dab32ba7f606eec8ec3bcb39"
+  },
+  "project_overview.pptx": {
+    "size": 509148,
+    "mtime": 1793022231.283357,
+    "sha256": "0dbcc695e4485482cb104878f3d68ac77888fec65e10fcb13e6e9df04425209e"
+  },
+  "README.md": {
+    "size": 11869,
+    "mtime": 1793252022.2682235,
+    "sha256": "1713712a061361d87f549b4ca0f238476be0aad91963b50569f214de06e63fdd"
+  },
+  "requirements.txt": {
+    "size": 138,
+    "mtime": 1793022231.2844193,
+    "sha256": "1a2561706212bc6ff9502e924ac351dd447a6e2fdd01e11563cb8aa078eb5c2a"
+  },
+  "configs\\config.yaml": {
+    "size": 789,
+    "mtime": 1793022231.1673985,
+    "sha256": "6e9bfd37a871f3bdb3a8ce0eea075cd741a08a1b598068ae5dc8ab4d216e1935"
+  },
+  "iot_fingerprint_gui\\.env": {
+    "size": 193,
+    "mtime": 1793022231.1851025,
+    "sha256": "ba8617261f1cfc50e5433110c01179f64a02bdd1c388dcb6fe4b939ff1e56bd6"
+  },
+  "iot_fingerprint_gui\\.gitignore": {
+    "size": 119,
+    "mtime": 1793022231.1856308,
+    "sha256": "e6b90825f0bfd5901b715e6649a4f999f502f433604511041cd393836d2f19d3"
+  },
+  "iot_fingerprint_gui\\README.md": {
+    "size": 6501,
+    "mtime": 1793022231.186671,
+    "sha256": "be117b4e80a9d3eecf4a07ef874a9769f97ca946f4690b37245e1b6667a69789"
+  },
+  "iot_fingerprint_gui\\requirements.txt": {
+    "size": 205,
+    "mtime": 1793022231.2650113,
+    "sha256": "ade087c696359fe5e360e837eb721d2b6d6a00c471e1f92291405c8d898cefcb"
+  },
+  "presentation\\generate_charts.py": {
+    "size": 11574,
+    "mtime": 1793022231.2748613,
+    "sha256": "774f0534483eef60f310418a761507e812a1cd6e43ee87f4dabe831e8d2a794d"
+  },
+  "presentation\\generate_deck.py": {
+    "size": 28610,
+    "mtime": 1793022231.2755158,
+    "sha256": "71337f61b75ba2091b01b5627d5127384dd682b8cc7b7629bd03aa024beaa203"
+  },
+  "presentation\\project_overview.pptx": {
+    "size": 509148,
+    "mtime": 1793022231.2805564,
+    "sha256": "0dbcc695e4485482cb104878f3d68ac77888fec65e10fcb13e6e9df04425209e"
+  },
+  "project_report\\build_readable_report.py": {
+    "size": 48821,
+    "mtime": 1793252022.4231157,
+    "sha256": "9fcba74a83cb9a9794d7654c524e8f9387117faaca8335a7f2da2c89e64f2e94"
+  },
+  "project_report\\build_website_guide.py": {
+    "size": 49382,
+    "mtime": 1793252022.4231157,
+    "sha256": "31239e0b668027802503430be485a00f38e8a669894e0bbc4b1ab6de0bd8c78d"
+  },
+  "project_report\\export_documents.py": {
+    "size": 16997,
+    "mtime": 1793252022.4231157,
+    "sha256": "0534bf135caf6e0e544b55a3d41adb32d12b6709ada1f77e9a62c9b9528a64ea"
+  },
+  "project_report\\generate_report.py": {
+    "size": 67724,
+    "mtime": 1793252022.463446,
+    "sha256": "bca46675f3da121d019f449723a79b13a79340b64caaf6be5cd8f620436fd408"
+  },
+  "project_report\\REPORT.docx": {
+    "size": 959907,
+    "mtime": 1793252022.3901596,
+    "sha256": "ec470980e5056b3ec4c5b909a9ba0d2ddc251a8d5a1864206611fd8a360f0815"
+  },
+  "project_report\\REPORT.md": {
+    "size": 31675,
+    "mtime": 1793252022.3901596,
+    "sha256": "0b18948231d0b3b12983cf872bb72e94c778c9452c55dd04e5e9365fb1ceb3bf"
+  },
+  "project_report\\REPORT.pdf": {
+    "size": 1294369,
+    "mtime": 1793252022.4064822,
+    "sha256": "9247098e68763459fae0f856516f32d5a87a65c80ff984d9b70070e2967b8325"
+  },
+  "project_report\\WEBSITE_GUIDE.docx": {
+    "size": 47196,
+    "mtime": 1793252022.4064822,
+    "sha256": "17f2ee7d95cd6aace3fcc4b1c446aa715c4821f47b969ae57ea403481fcbcf45"
+  },
+  "project_report\\WEBSITE_GUIDE.md": {
+    "size": 34383,
+    "mtime": 1793252022.4064822,
+    "sha256": "f9ac58416b0074f9e33c624cb3d28fa70a47530f163c1984b1d7dcaf1e1fe1da"
+  },
+  "project_report\\WEBSITE_GUIDE.pdf": {
+    "size": 1106595,
+    "mtime": 1793252022.4231157,
+    "sha256": "3b9bd91ceb739e9f29c18b48f58a4514104a28de1199d0c260b826bac178b987"
+  },
+  "results\\dwt_scaler.pkl": {
+    "size": 847,
+    "mtime": 1793001947.3036313,
+    "sha256": "82eb28ffd451bca1a48e7d3a789160ff207f29bfe56fab829baee2e56e21bd9b"
+  },
+  "results\\openset_results.json": {
+    "size": 3036,
+    "mtime": 1793022231.2854755,
+    "sha256": "415d634f78df0abfc8da7d3c90906f6e93e4bae7dd7478bf96074158b6d7926c"
+  },
+  "results\\raw_stat_scaler.pkl": {
+    "size": 570,
+    "mtime": 1793001947.3036313,
+    "sha256": "40ee144d30cf1c7b1f835e1d446740d80515b1ce783002dce8e8021dd28d416c"
+  },
+  "results\\split_assignment.csv": {
+    "size": 698,
+    "mtime": 1793001947.3125458,
+    "sha256": "4e57c6a490d24cc3b4862779523256d937c516158a044c2a73dce35c44c5e154"
+  },
+  "results\\split_assignment.pkl": {
+    "size": 534,
+    "mtime": 1793001947.314563,
+    "sha256": "32aecd3b374671c6c9cd129eb68755a1b93b75123a9df56d2002975954d13c4d"
+  },
+  "results\\unknown_devices_summary.csv": {
+    "size": 2126,
+    "mtime": 1793022231.3038895,
+    "sha256": "495655b6efe1aac65dee2852a7dbc4be63392e309912871c2b10b09e3f67e3ef"
+  },
+  "results\\unknown_evaluation_table.csv": {
+    "size": 1803,
+    "mtime": 1793022231.304649,
+    "sha256": "efd71db6b1d7b3dd186a0ba3ca7ef6e1dbf85322f8940bb0f1d79f9be1231bc1"
+  },
+  "src\\classifier.py": {
+    "size": 12637,
+    "mtime": 1793022231.3067412,
+    "sha256": "6a5ff657ce31105e642662ac2559383cd35d1e877327323c6d40b0dc9f699046"
+  },
+  "src\\evaluate_unknowns.py": {
+    "size": 4585,
+    "mtime": 1793022231.3075771,
+    "sha256": "87dd69a1f0336a23049a704910b1273a7a25cc7f76ebb8bf3dafa4b792e5ba0d"
+  },
+  "src\\extract_unknowns.py": {
+    "size": 9323,
+    "mtime": 1793022231.30847,
+    "sha256": "0a415c069a11d1233817d344d250ca2af408ddd88fda56775ccd02f05aa222e0"
+  },
+  "src\\features.py": {
+    "size": 7548,
+    "mtime": 1793022231.310062,
+    "sha256": "08264e7abbf442a235002269fa7a1c8cfdc7541fbacbb7aa258768ea678ea5b2"
+  },
+  "src\\iat.py": {
+    "size": 12432,
+    "mtime": 1793022231.3118632,
+    "sha256": "fd1fb19402e3bbf745928d1dd21ea28a151597b4d75fd0c066e3d129d7e47deb"
+  },
+  "src\\openset.py": {
+    "size": 11542,
+    "mtime": 1793022231.31308,
+    "sha256": "e94a0b37cc6cafae360dc814c60e333b3bcfe72c057bae44691a2d415c66bb87"
+  },
+  "src\\preprocessing.py": {
+    "size": 10904,
+    "mtime": 1793022231.3142176,
+    "sha256": "a0399c3ad28e08ca638c64e90f666dd6258bb69514995872c855410d4d4e314b"
+  },
+  "src\\splits.py": {
+    "size": 12654,
+    "mtime": 1793022231.315924,
+    "sha256": "8bad5db05ac3b43ce8989dfe989a6ac942f8349dbd487341c3e76b2e8411a8a3"
+  },
+  "src\\spoof.py": {
+    "size": 14612,
+    "mtime": 1793128281.0260115,
+    "sha256": "331c1a77a43a6b01f431ca51d636dc1b54a49a18c29f74f897cd168aa044a329"
+  },
+  "src\\spoof_eval.py": {
+    "size": 22867,
+    "mtime": 1793128281.101337,
+    "sha256": "6e3e8c94a8d251bff1e22c534517165dcde21ab9dfa2c4d93c7898aaaa42467f"
+  },
+  "src\\windowing.py": {
+    "size": 11361,
+    "mtime": 1793022231.316432,
+    "sha256": "0a8b3c0a23dd0720866908b6c011fb31024230c1de1f710b88276182cc56749c"
+  },
+  "src\\__init__.py": {
+    "size": 0,
+    "mtime": 1793001947.5848012,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests\\test_spoof.py": {
+    "size": 21933,
+    "mtime": 1793129785.9890618,
+    "sha256": "1d466a63b0ebe8b9d74baf9ce5b9c0cf548172ba9eeb37b75d4e7f60e0bde8aa"
+  },
+  "results\\spoof_20261028_003341\\evaluation_summary.txt": {
+    "size": 1540,
+    "mtime": 1793127821.6406162,
+    "sha256": "15e96fa3b1a3e7d74465d68638dd8729a306a218de894820362ed1a5726a8730"
+  },
+  "results\\spoof_20261028_003341\\spoof_results.json": {
+    "size": 295642,
+    "mtime": 1793127821.5837023,
+    "sha256": "78e713756a09799ffd3470c40684ea20a001f6cd6e68e1d5f3b2233bbf72b254"
+  },
+  "results\\spoof_20261028_011238\\evaluation_summary.txt": {
+    "size": 1540,
+    "mtime": 1793130159.1646216,
+    "sha256": "15e96fa3b1a3e7d74465d68638dd8729a306a218de894820362ed1a5726a8730"
+  },
+  "results\\spoof_20261028_011238\\spoof_results.json": {
+    "size": 295642,
+    "mtime": 1793130158.8988142,
+    "sha256": "dda89757ec6a7ebd71ad855ce4bc159d6dc604804a50f946852eb7c09451caf5"
+  },
+  "results\\step7_20260917_144006\\cm_dwt_test.png": {
+    "size": 66676,
+    "mtime": 1793001947.3200917,
+    "sha256": "f3a175ea1a65b50755baac4e1e07e068b2a95c4d3128d0eaadd627c83680da5e"
+  },
+  "results\\step7_20260917_144006\\cm_dwt_val.png": {
+    "size": 66924,
+    "mtime": 1793001947.3221035,
+    "sha256": "e85d8d3cfdebb78224e92716481ca9b57ff61240e6e7519f5916a36088ce5b1f"
+  },
+  "results\\step7_20260917_144006\\cm_raw_test.png": {
+    "size": 64185,
+    "mtime": 1793001947.3306139,
+    "sha256": "c80c9ba3f1d9c28aece43422922aff92f542f3e3fc26ef302e7dd9dc5cda50bb"
+  },
+  "results\\step7_20260917_144006\\cm_raw_val.png": {
+    "size": 66027,
+    "mtime": 1793001947.332702,
+    "sha256": "eb668d5af1075898a6656ad8e04a379ae579ecc853a43fe78f39f8d1560810c3"
+  },
+  "results\\step7_20260917_144006\\config_snapshot.yaml": {
+    "size": 593,
+    "mtime": 1793001947.3386602,
+    "sha256": "516b3e9aa8a353f82fcc6a7886098ed81dab438dbc6f6c57ad9082e2ae908800"
+  },
+  "results\\step7_20260917_144006\\results_summary.json": {
+    "size": 2214,
+    "mtime": 1793001947.3411002,
+    "sha256": "d737e36cd71a551267eeedf5e9893005e5f33bebcb097988ef0a62384173cb01"
+  },
+  "results\\step7_20260917_144006\\rf_dwt_model.pkl": {
+    "size": 7843070,
+    "mtime": 1793001947.4600341,
+    "sha256": "604160ad58b85a5555dd3ad32aff37bc3d37d6cc87cb6e11fce2e7d902bd1494"
+  },
+  "results\\step7_20260917_144006\\rf_raw_model.pkl": {
+    "size": 2832528,
+    "mtime": 1793001947.5172243,
+    "sha256": "96ed4f956ec8044b6c540ec3aaeff64e6e155f23c1a702d916f7bd10e8f7f685"
+  },
+  "results\\step7_20261026_151020\\cm_test.png": {
+    "size": 65101,
+    "mtime": 1793022231.2870963,
+    "sha256": "38c8ea0af016ef2a87f804318151a3c766b4798e5e47f5f2cfe74fb5d555ab7a"
+  },
+  "results\\step7_20261026_151020\\cm_val.png": {
+    "size": 66976,
+    "mtime": 1793022231.2879958,
+    "sha256": "034b5956ea166badb10f99af31862b0f92eb2235199be8ba17e78c2a3e55f89c"
+  },
+  "results\\step7_20261026_151020\\config_snapshot.yaml": {
+    "size": 519,
+    "mtime": 1793022231.2894778,
+    "sha256": "055c66a0ec7a7e4aa3b33c74be75879dcf91726d252b84ee1875a4c3c4c3a3ef"
+  },
+  "results\\step7_20261026_151020\\results_summary.json": {
+    "size": 1261,
+    "mtime": 1793022231.2902703,
+    "sha256": "2d31b26c4c312b53df391509c17dd704f75ef444c8571235324fd68d49bdf31c"
+  },
+  "results\\step7_20261026_151020\\rf_model.pkl": {
+    "size": 2829927,
+    "mtime": 1793022231.3027213,
+    "sha256": "243756ed899a939df19fb7ba97d69820574d68313b2b2139515f885587a8f948"
+  },
+  "results\\step8_20260917_151513\\heldout_errors.png": {
+    "size": 37452,
+    "mtime": 1793001947.5186906,
+    "sha256": "136eccd8bd54c5adba874215c1c3ba0e1a483e796580e2fa3bcf4634d44eaf13"
+  },
+  "results\\step8_20260917_151513\\results_summary.json": {
+    "size": 499,
+    "mtime": 1793001947.5186906,
+    "sha256": "e3a2335a7b11157bed9a195b69524e3c8262b456d54c226f18e74ebbf40796b0"
+  },
+  "results\\step8_20260917_151513\\test_errors.png": {
+    "size": 31933,
+    "mtime": 1793001947.525533,
+    "sha256": "91c7107afcf0d95bdd98558c115754ba23be042c680b82ac54959a25dc8d636c"
+  },
+  "results\\step8_20260917_151513\\vae_model.pt": {
+    "size": 11493,
+    "mtime": 1793001947.527301,
+    "sha256": "c47c8a526e0eb3a63ca4b9eca8469224c3c2e28b83873d0905c30c55eeeafa10"
+  },
+  "results\\step8_20260917_151513\\val_errors.png": {
+    "size": 35643,
+    "mtime": 1793001947.527301,
+    "sha256": "9039823192ba72b2450df916bb35a082050c42ba4e59aac33135dd20cc7e6aa5"
+  },
+  "results\\step9_20260917_153306\\config_snapshot.yaml": {
+    "size": 593,
+    "mtime": 1793001947.5315828,
+    "sha256": "516b3e9aa8a353f82fcc6a7886098ed81dab438dbc6f6c57ad9082e2ae908800"
+  },
+  "results\\step9_20260917_153306\\results_summary.json": {
+    "size": 246,
+    "mtime": 1793001947.5329218,
+    "sha256": "921be4c78c9fa96b5c5c8c27ede55fe9363c96ea2b6f5b96059a9e85d8020991"
+  },
+  "results\\step9_20260917_153306\\rf_classifier.pkl": {
+    "size": 7185741,
+    "mtime": 1793001947.5762827,
+    "sha256": "83d8be30860ac714b10dfdd2d14fba415e031fdf6603d906126ad5bb48b6f039"
+  },
+  "results\\step9_20260917_153306\\vae_model.pt": {
+    "size": 11493,
+    "mtime": 1793001947.5762827,
+    "sha256": "7ca137530d5911bc5b85b6c776baff03c42fa6e5ac3be16eb323ce5957f532c8"
+  },
+  "project_report\\figures\\fig1_confusion_matrix.png": {
+    "size": 154435,
+    "mtime": 1793252022.435167,
+    "sha256": "f415b4a1a6cbea79a021186ed06beb00689e1941af171b4ce34b2dbab8bc5773"
+  },
+  "project_report\\figures\\fig2_per_device_f1.png": {
+    "size": 136968,
+    "mtime": 1793252022.4398155,
+    "sha256": "60e38b16e1a64807e8046c47b790ecb33dc4d894c96cbd53999fc9cb9dbb5b11"
+  },
+  "project_report\\figures\\fig3_feature_importance.png": {
+    "size": 117245,
+    "mtime": 1793252022.4423242,
+    "sha256": "0fb1f22e5f2813e1571f1f8dd2714571a77daf96ce45e05f8c2f1ae76cc059ea"
+  },
+  "project_report\\figures\\fig4_validation_confidence_hist.png": {
+    "size": 113881,
+    "mtime": 1793252022.448232,
+    "sha256": "908016ad55384a47d0cac3e4096f3f6edfd66521fd5291923365dad9a676da4c"
+  },
+  "project_report\\figures\\fig5_unknown_device_detection.png": {
+    "size": 196563,
+    "mtime": 1793252022.4524772,
+    "sha256": "77e5aee438643d39cfdf4a9cfc3064c89a9baebd9d76135881fe33bc49737c74"
+  },
+  "project_report\\figures\\fig6_spoof_rejection_by_experiment.png": {
+    "size": 137415,
+    "mtime": 1793252022.4564612,
+    "sha256": "1008879d6f553db5f691646bac6c0095dd2300ce2c9c332ff5809f6720b2ba36"
+  },
+  "project_report\\figures\\fig7_mimicry_jitter_vs_strength.png": {
+    "size": 167988,
+    "mtime": 1793252022.4586701,
+    "sha256": "41d79cee0bd0bd3a417d632292a9be362b76236a0b780e61eaa0f53810746e25"
+  },
+  "presentation\\assets\\future_architecture.png": {
+    "size": 127993,
+    "mtime": 1793022231.267864,
+    "sha256": "4e4793881df632cffd90260b557088ddf984336b00c7e4e858d4f990531b6886"
+  },
+  "presentation\\assets\\pipeline_diagram.png": {
+    "size": 119069,
+    "mtime": 1793022231.2694757,
+    "sha256": "17c0e701849cd1dc42cec24f7750a80a96e0a04918a93b8fc970a41f11c6f8f2"
+  },
+  "presentation\\assets\\results_chart.png": {
+    "size": 148708,
+    "mtime": 1793022231.2724898,
+    "sha256": "aba7d1433667038e600505a3e5edcb448f3948f40c4db8b4b9b350880b9c329e"
+  },
+  "presentation\\assets\\timing_intuition.png": {
+    "size": 96905,
+    "mtime": 1793022231.2745438,
+    "sha256": "8fb9eaf082dde32ef14cc057806240d7f1b26881072b9ba2c8a4508365c18123"
+  },
+  "iot_fingerprint_gui\\assets\\metadata.json": {
+    "size": 490,
+    "mtime": 1793022231.188501,
+    "sha256": "4e99febe0cc114831827e600eec64f57e2cb6adfdec8d049ee87460c22e5513a"
+  },
+  "iot_fingerprint_gui\\backend\\main.py": {
+    "size": 2111,
+    "mtime": 1793128280.6239626,
+    "sha256": "90c62a3e0e540da65809c8b70783825d2fb3f3380e1aec6677ff9d4e395a4e71"
+  },
+  "iot_fingerprint_gui\\backend\\pipeline.py": {
+    "size": 7934,
+    "mtime": 1793129785.6232734,
+    "sha256": "6b40e8e60824ff0b12cb1f78159ba6f5333a1b7c8e0c99233ab8eccbfc49410e"
+  },
+  "iot_fingerprint_gui\\backend\\setup_assets.py": {
+    "size": 15698,
+    "mtime": 1793022232.623775,
+    "sha256": "f3985fd80f0600cd0eabc8cd43c78f3f4b8f72650e64e2267285de382911cb68"
+  },
+  "iot_fingerprint_gui\\frontend\\.gitignore": {
+    "size": 277,
+    "mtime": 1793022231.2441144,
+    "sha256": "d50ab07e11fa4bf3b1c7c3312e1d7baeab56cca756832ccf40476823ad2a38b7"
+  },
+  "iot_fingerprint_gui\\frontend\\.oxlintrc.json": {
+    "size": 239,
+    "mtime": 1793022231.245114,
+    "sha256": "9a11085b48d1ea2c1cdd18c3438a669abcc635f5586019e5df87161369af70ef"
+  },
+  "iot_fingerprint_gui\\frontend\\index.html": {
+    "size": 342,
+    "mtime": 1793022420.7448854,
+    "sha256": "c9b66619486c05fdcba36b69d33f7de5f4c8daeeb4b8a065269d9c8b04672c7d"
+  },
+  "iot_fingerprint_gui\\frontend\\package-lock.json": {
+    "size": 80713,
+    "mtime": 1793022231.2478848,
+    "sha256": "b944c174e3f4d9572d3db2f8bf7bfd66d5405e8a7e7388b961712a9a8a6039ef"
+  },
+  "iot_fingerprint_gui\\frontend\\package.json": {
+    "size": 603,
+    "mtime": 1793022231.2487843,
+    "sha256": "0270e90e15648fd41de281dd334b460563954f705619c93a5b7a9005e7262dfb"
+  },
+  "iot_fingerprint_gui\\frontend\\postcss.config.js": {
+    "size": 86,
+    "mtime": 1793022231.2494872,
+    "sha256": "374f669f08b18e67d0a7264fa45b71228017e604fe7f6db8a5c1bd5ba27e5c98"
+  },
+  "iot_fingerprint_gui\\frontend\\README.md": {
+    "size": 1025,
+    "mtime": 1793022231.2457447,
+    "sha256": "3fde43cae789b2a7011b266f6925d928e52d99012c7673141a22952eeef7a3c0"
+  },
+  "iot_fingerprint_gui\\frontend\\tailwind.config.js": {
+    "size": 464,
+    "mtime": 1793022231.2639508,
+    "sha256": "9793896c328f89e94e3561e7eacc614c1933b3ca088f5546f7ec78d9573b8a1e"
+  },
+  "iot_fingerprint_gui\\frontend\\vite.config.js": {
+    "size": 486,
+    "mtime": 1793022231.2644842,
+    "sha256": "0fb5140f12e84e585359388a91fa4dc1dca5f9bb5c33d505975219c594264344"
+  },
+  "iot_fingerprint_gui\\frontend\\dist\\favicon.svg": {
+    "size": 9522,
+    "mtime": 1793022231.2500186,
+    "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66"
+  },
+  "iot_fingerprint_gui\\frontend\\dist\\icons.svg": {
+    "size": 5055,
+    "mtime": 1793022231.251119,
+    "sha256": "7ca2d67c9c3aebf50cdc8709ee8aacf8cdb8cc7ea6325ea94939caef5da1c53d"
+  },
+  "iot_fingerprint_gui\\frontend\\dist\\index.html": {
+    "size": 438,
+    "mtime": 1793249972.4545279,
+    "sha256": "a05efb273cead7704fb3c99e8a05d4a20b4f76d0c47deab71b9bedcc7cbeb28c"
+  },
+  "iot_fingerprint_gui\\frontend\\public\\favicon.svg": {
+    "size": 9522,
+    "mtime": 1793022231.2500186,
+    "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66"
+  },
+  "iot_fingerprint_gui\\frontend\\public\\icons.svg": {
+    "size": 5055,
+    "mtime": 1793022231.251119,
+    "sha256": "7ca2d67c9c3aebf50cdc8709ee8aacf8cdb8cc7ea6325ea94939caef5da1c53d"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\App.css": {
+    "size": 3075,
+    "mtime": 1793022231.2522404,
+    "sha256": "c2571ce7245629994b8adc84f6c48e1920f047a4e7e29c89a4aeb51eeb1b5433"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\App.jsx": {
+    "size": 5055,
+    "mtime": 1793249750.3442805,
+    "sha256": "9be6ad8039a3449cd3ceecbd4e7cc0958fc7a044e773bf8c3df9ed3869b6f209"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\index.css": {
+    "size": 289,
+    "mtime": 1793022231.2628958,
+    "sha256": "0504b73396553b83e90cbc53efb23ee38cc06165a80b05e7283a8a246280f984"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\main.jsx": {
+    "size": 239,
+    "mtime": 1793022231.2634218,
+    "sha256": "ae81f1c01f2c8018a1ba5cf73171921c8982d90b049bb6b039ea82f8e1dec958"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\assets\\hero.png": {
+    "size": 13057,
+    "mtime": 1793022231.253805,
+    "sha256": "881ffbcaafc212e49addad08846a5b82761355fa20624253af3477ba33262c5c"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\assets\\react.svg": {
+    "size": 4126,
+    "mtime": 1793022231.2543561,
+    "sha256": "35ef61ed53b323ae94a16a8ec659b3d0af3880698791133f23b084085ab1c2e5"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\assets\\vite.svg": {
+    "size": 8710,
+    "mtime": 1793022231.2555907,
+    "sha256": "2f1f6c6f90a0ef7422cbb4cfafcd8ad329c507a18afdc34cc21fa72179b9c54a"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\FeaturesTable.jsx": {
+    "size": 1613,
+    "mtime": 1793022231.2561252,
+    "sha256": "4c769a59832cf53360ebc6ef069c50f37db481fb4a2508380331f81486dc69ea"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\IatTimelineChart.jsx": {
+    "size": 1981,
+    "mtime": 1793022231.2570748,
+    "sha256": "ef69d2201e14ac121433188b690631c4c2a7df62cd3a30c1da31caba6dc796b4"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\Navbar.jsx": {
+    "size": 2199,
+    "mtime": 1793249750.3402772,
+    "sha256": "f391ccc9605ed344728c86b7806e14bc68ab902eed9e62950249a7853f0102fe"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\ProbabilityBars.jsx": {
+    "size": 1620,
+    "mtime": 1793252022.3273747,
+    "sha256": "34589b3bdeb0aebe6765f4cc37aa2787be6ee155dcd85f1e68c41bfc10a07800"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\SpoofCheck.jsx": {
+    "size": 47262,
+    "mtime": 1793249963.319646,
+    "sha256": "fc2e16513b1387b41683ca3b26d795b2a0690984aa474d74162fd4823e2b1fd4"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\TabKnown.jsx": {
+    "size": 12738,
+    "mtime": 1793022233.0758684,
+    "sha256": "4cda3abb294886e80d25334c62bac309dba75bd1a044e706c381d45cd104b857"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\TabTestOwn.jsx": {
+    "size": 21966,
+    "mtime": 1793249879.7359788,
+    "sha256": "45fe0ffd0dba82657d458294ca48d037f5540dad70fb07b8662fd88448017024"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\components\\TabUnknown.jsx": {
+    "size": 15895,
+    "mtime": 1793022233.0766199,
+    "sha256": "02fdab9fe56c353855f54813446efa24f590df6d19c180bb2dd5863dee59de52"
+  },
+  "iot_fingerprint_gui\\frontend\\src\\data\\sampleTimestamps.js": {
+    "size": 4802,
+    "mtime": 1793208512.7269783,
+    "sha256": "690fe68f45bbeda52e7d1a88aa65e018187e45168a8124d8057f04add02bace7"
+  },
+  "iot_fingerprint_gui\\frontend\\public\\data\\spoof_results.json": {
+    "size": 295642,
+    "mtime": 1793130159.0007446,
+    "sha256": "dda89757ec6a7ebd71ad855ce4bc159d6dc604804a50f946852eb7c09451caf5"
+  },
+  "iot_fingerprint_gui\\frontend\\dist\\assets\\index-B0PDAqrd.css": {
+    "size": 28192,
+    "mtime": 1793249972.4545279,
+    "sha256": "0abbbaa76e58a5233665fdc980e437bc92427008d7ee810e640a2289156c5844"
+  },
+  "iot_fingerprint_gui\\frontend\\dist\\assets\\index-Bp89MN29.js": {
+    "size": 306143,
+    "mtime": 1793249972.4460623,
+    "sha256": "925efe7019dc5629308cc02a0df71cc95e2dcf09c4708ae6395ea76d23637e8c"
+  },
+  "iot_fingerprint_gui\\frontend\\dist\\data\\spoof_results.json": {
+    "size": 295642,
+    "mtime": 1793130159.0007446,
+    "sha256": "dda89757ec6a7ebd71ad855ce4bc159d6dc604804a50f946852eb7c09451caf5"
+  },
+  "iot_fingerprint_gui\\backend\\routes\\info.py": {
+    "size": 1838,
+    "mtime": 1793022231.241091,
+    "sha256": "06a1e33a0e8e8c0318e252ca5285115d9eea69c12af1372118aa0645466f1555"
+  },
+  "iot_fingerprint_gui\\backend\\routes\\predict.py": {
+    "size": 4704,
+    "mtime": 1793022231.242119,
+    "sha256": "18c0f2669e181f2108c9f41bc4702e92bb022f87b080ca7884e1bdb390727a6f"
+  },
+  "iot_fingerprint_gui\\backend\\routes\\spoof.py": {
+    "size": 6979,
+    "mtime": 1793129785.7251408,
+    "sha256": "2cdce434b68b5f3290fc461db083bf0a5ff7c8bf42efc3b667fa344c0cc51d8e"
+  },
+  "iot_fingerprint_gui\\backend\\routes\\stream.py": {
+    "size": 10230,
+    "mtime": 1793022233.0746305,
+    "sha256": "20b63d6b310684ab4f568cc9b0625089a5673d65c5093a09a5ca5245ecffe308"
+  },
+  "iot_fingerprint_gui\\assets\\evaluation\\evaluation_data.json": {
+    "size": 12070,
+    "mtime": 1793022231.1879764,
+    "sha256": "ae254b0bcfad637febb766ec872cf8156cb8479493829cabea35d36fdeeb11d8"
+  },
+  "iot_fingerprint_gui\\assets\\evaluation\\spoof_results.json": {
+    "size": 295642,
+    "mtime": 1793130159.1646216,
+    "sha256": "dda89757ec6a7ebd71ad855ce4bc159d6dc604804a50f946852eb7c09451caf5"
+  },
+  "iot_fingerprint_gui\\assets\\model\\raw_stat_scaler.pkl": {
+    "size": 570,
+    "mtime": 1793022231.1895628,
+    "sha256": "40ee144d30cf1c7b1f835e1d446740d80515b1ce783002dce8e8021dd28d416c"
+  },
+  "iot_fingerprint_gui\\assets\\model\\rf_model.pkl": {
+    "size": 2829927,
+    "mtime": 1793022231.203556,
+    "sha256": "243756ed899a939df19fb7ba97d69820574d68313b2b2139515f885587a8f948"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\AmazonEcho.json": {
+    "size": 63943,
+    "mtime": 1793022232.5875795,
+    "sha256": "295f1b722be3a253e722694d926baf3e73c3b506e4482016d557ec19b1a61b0e"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\AugustDoorBell.json": {
+    "size": 2,
+    "mtime": 1793022231.2076836,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\AwairAirQuality.json": {
+    "size": 64722,
+    "mtime": 1793022232.589473,
+    "sha256": "5e3b8f37f1510849f22ecbde4ea714f2dc490e0f8c748fee4112d3bf8562bc75"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\BelkinCamera.json": {
+    "size": 2,
+    "mtime": 1793022231.2093134,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\BelkinWemoMotionSensor.json": {
+    "size": 64368,
+    "mtime": 1793022232.591738,
+    "sha256": "cec4d0169afeedf11f2e7b9b909a2c4fe7b4f6c6b5a88352b061bff169e3fbf1"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\BelkinWemoSwitch.json": {
+    "size": 64092,
+    "mtime": 1793022232.5936732,
+    "sha256": "2bf4502b98347bc42f6348ded71e885294a4973b5e820f18c718d4bf654f9b53"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\BlipCareBPMeter.json": {
+    "size": 2,
+    "mtime": 1793022231.2120535,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\CanaryCamera.json": {
+    "size": 63531,
+    "mtime": 1793022232.5953436,
+    "sha256": "f0b50eaf5fbb282a20adb2ed216e981dabdb6eeaa86d33deb5119d438d847725"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\HelloBarbie.json": {
+    "size": 2,
+    "mtime": 1793022231.2147207,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\HPPrinter.json": {
+    "size": 63974,
+    "mtime": 1793022232.59742,
+    "sha256": "e8b60a3747bd0b13c0789c190772b921a02aa5120a0f18ae31e0a3a026eaa434"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\iHome.json": {
+    "size": 64597,
+    "mtime": 1793022232.623775,
+    "sha256": "6b4df15e2ec76ef5fb5c50f84fc7f3c9a412162e1b839c4e3481a078e1756f21"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\LiFXBulb.json": {
+    "size": 63961,
+    "mtime": 1793022232.5995238,
+    "sha256": "497f953fee864aaa54ae461808c751fba41a00221068c80ebd6e0368c1f6cd47"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\NestDropCam.json": {
+    "size": 65752,
+    "mtime": 1793022232.6016781,
+    "sha256": "fd779c92460ee96d7c5d5d0231f9bbd784a99e5985a5391b3f5836beafa606e4"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\NestProtectSmokeAlarm.json": {
+    "size": 11248,
+    "mtime": 1793022232.6033146,
+    "sha256": "5088817603502f44b5beeb9c8df543a645913a2f7c6ebe8b04834e93bb2105f4"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\NetatmoWeatherStation.json": {
+    "size": 65053,
+    "mtime": 1793022232.604896,
+    "sha256": "db6d7e94a3465fd55a698f653fad2d2557b455a778901bb5e16f1bc08d89893b"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\NetatmoWelcome.json": {
+    "size": 63353,
+    "mtime": 1793022232.6080148,
+    "sha256": "677e3ac449375a168e5c8d8f4461d53aeac147f73ff167790fbd3be5aea3e55e"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\PhilipsHue.json": {
+    "size": 64029,
+    "mtime": 1793022232.6095302,
+    "sha256": "e368a1c73f15e9539ef88950cdccba179f95dbda8b317fbfecfab185e40e2010"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\PixStarPhotoFrame.json": {
+    "size": 64164,
+    "mtime": 1793022232.6114736,
+    "sha256": "6c50700eee1e7bd11e8975ec26a0a306bfca94ca73666f9fd6e4bc94c51f339f"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\RingDoorBell.json": {
+    "size": 2,
+    "mtime": 1793022231.2250173,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\SamsungCamera.json": {
+    "size": 64237,
+    "mtime": 1793022232.612481,
+    "sha256": "733e11795e5894cc2a0f508575ba9a98df2b111d9afd34cdef27c33c55d99e27"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\SamsungSmartThings.json": {
+    "size": 65206,
+    "mtime": 1793022232.6159778,
+    "sha256": "d2521b2690b32540fa55b31c8fcd94bf14f6072f4c8244f459ed270d45b80ff7"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\TPLinkCamera.json": {
+    "size": 2,
+    "mtime": 1793022231.2276733,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\TPLinkSmartPlug.json": {
+    "size": 19229,
+    "mtime": 1793022232.6167264,
+    "sha256": "bbd64833f28014d2b6a215b3aa30f46e02d80a111941b9d65fd8fa498f4c9e39"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\TribySpeaker.json": {
+    "size": 64780,
+    "mtime": 1793022232.6167264,
+    "sha256": "94c501aa66b304810890fa66e71def993cfb9d670a978e429884231641ccd3a5"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\WithingsBabyMonitor.json": {
+    "size": 2,
+    "mtime": 1793022231.2299843,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\WithingsSleepSensor.json": {
+    "size": 65042,
+    "mtime": 1793022232.620553,
+    "sha256": "dff44d8b0d0d327fc41c5c49618f78fb36c110de3623530a53b1826e90dfc1ab"
+  },
+  "iot_fingerprint_gui\\assets\\replay_data\\WithingsSmartScale.json": {
+    "size": 13326,
+    "mtime": 1793022232.6227653,
+    "sha256": "4013248bb569e718420fc594c731c3c3b324cb4829aa4354a0d8e4b667cb780e"
+  },
+  "data\\features\\AmazonEcho_windows.csv": {
+    "size": 2180711,
+    "mtime": 1793001946.10858,
+    "sha256": "b44e079ed597f2d3891a13e22a2998772e550c5fa9c51b84383023f7885bcd2a"
+  },
+  "data\\features\\BelkinWemoMotionSensor_windows.csv": {
+    "size": 4718282,
+    "mtime": 1793001946.1695712,
+    "sha256": "445f41138e175e8cb8c99bda43911f1e1f9aeba0936f071b8c7271dc9caa491e"
+  },
+  "data\\features\\dwt_features.csv": {
+    "size": 2042845,
+    "mtime": 1793001946.2725616,
+    "sha256": "3a7e4c8fb6fe1bb382693c3ac7918df5e9e72f6434553f2e68d07e6e1db32fc6"
+  },
+  "data\\features\\dwt_scaled_test.csv": {
+    "size": 299123,
+    "mtime": 1793001946.2809148,
+    "sha256": "175b0b23a4898ed3fac7322c81fc882ce5900d67e701be1e5528012794000248"
+  },
+  "data\\features\\dwt_scaled_train.csv": {
+    "size": 1534682,
+    "mtime": 1793001946.3200343,
+    "sha256": "e843bb50f301f4da1493a26f7d2b79f8f810616593d617b5aba30eabd114e9b2"
+  },
+  "data\\features\\dwt_scaled_val.csv": {
+    "size": 298721,
+    "mtime": 1793001946.3293457,
+    "sha256": "05ed1d38cfa4d40f43d808e59496ed1ccede1e91d940c0200897846de1ec6154"
+  },
+  "data\\features\\PhilipsHue_windows.csv": {
+    "size": 2857119,
+    "mtime": 1793001946.2076225,
+    "sha256": "a09f925a116498304664eac2d92cd524b7e3fd2d9f9382387eb251a422a58bb7"
+  },
+  "data\\features\\raw_scaled_test.csv": {
+    "size": 206321,
+    "mtime": 1793001946.336497,
+    "sha256": "d53a866cef67a953347e3612aa912401f7e992c0a12594f6b20ac845ba0ff1b4"
+  },
+  "data\\features\\raw_scaled_train.csv": {
+    "size": 1057976,
+    "mtime": 1793001946.3449998,
+    "sha256": "c73172614a8b71674c32a93cfeb2c976bd410c2019f22d1162d288b90102ae1d"
+  },
+  "data\\features\\raw_scaled_val.csv": {
+    "size": 205780,
+    "mtime": 1793001946.3557737,
+    "sha256": "41cacaf81c9ec4e866714c69f8da5e8e94960192b01badcb7ad26ce6dac3f107"
+  },
+  "data\\features\\raw_stat_features.csv": {
+    "size": 1385065,
+    "mtime": 1793001946.3811827,
+    "sha256": "b4f18f30707ed944d4713600c75a4979f7d18fc1490df98cba18542689c4e794"
+  },
+  "data\\features\\SamsungCamera_windows.csv": {
+    "size": 2285150,
+    "mtime": 1793001946.2408047,
+    "sha256": "68ebd6bb930956480e20fae6d575a5cba1e698f172ec208f7abecf1743b19018"
+  },
+  "data\\features\\TPLinkSmartPlug_windows.csv": {
+    "size": 106233,
+    "mtime": 1793001946.2489622,
+    "sha256": "37a74cffe3033d89aaf0659b661d17d757a9a19801b8c0b35856dbe60f3a8a03"
+  },
+  "data\\features\\unknown_devices_features.csv": {
+    "size": 1452219,
+    "mtime": 1793022231.181123,
+    "sha256": "88cbe1d0b99088151e643fb12d15ac8141ed3509f616d95f7067e4e0e342a5d4"
+  },
+  "data\\features\\unknown_devices_windows.csv": {
+    "size": 199174,
+    "mtime": 1793022231.184038,
+    "sha256": "b3af2faf93c84838d316f687729c0765f8673b988ad42abdf15b80b1f5653d1f"
+  },
+  "data\\processed\\AmazonEcho.csv": {
+    "size": 4246990,
+    "mtime": 1793001946.4516964,
+    "sha256": "d407a262b8f71a364afcd93776b0d76979f290f4813f0f88fe198455e36552fd"
+  },
+  "data\\processed\\AmazonEcho_iat.csv": {
+    "size": 6359083,
+    "mtime": 1793001946.5393195,
+    "sha256": "7f554399c4f063d37bd6555de5d6ec469f1fe983b0ecf0ef950884d6891a70b7"
+  },
+  "data\\processed\\BelkinWemoMotionSensor.csv": {
+    "size": 9222591,
+    "mtime": 1793001946.6793072,
+    "sha256": "7e97f2cc90648bd28bf1294760319dbb4daad6945476c54819e8b6037b9b704d"
+  },
+  "data\\processed\\BelkinWemoMotionSensor_iat.csv": {
+    "size": 13748973,
+    "mtime": 1793001946.8891838,
+    "sha256": "f5bfb419882007188bdaaa397b7b1edb44405b669a7e3b867a5725eb95263076"
+  },
+  "data\\processed\\PhilipsHue.csv": {
+    "size": 5612729,
+    "mtime": 1793001946.9755917,
+    "sha256": "2c0d93f8cf455c7cf527e2bca8cdc1b36c2f52ef28f7c146790b55314beac6fc"
+  },
+  "data\\processed\\PhilipsHue_iat.csv": {
+    "size": 8379643,
+    "mtime": 1793001947.1012454,
+    "sha256": "9899a865f7945f34065e1bdca5ce3b14dd15280a19263bce8aba6b9cdc968373"
+  },
+  "data\\processed\\SamsungCamera.csv": {
+    "size": 4506444,
+    "mtime": 1793001947.180663,
+    "sha256": "27f3ec7bf369e6aa4f156f1f87f6161ba5d3e026be5b647e81ceae7ebbbaeb7e"
+  },
+  "data\\processed\\SamsungCamera_iat.csv": {
+    "size": 6717874,
+    "mtime": 1793001947.2763307,
+    "sha256": "3116b65ad0f25ff9dc4b005bff44bac05814078014d9d482446f3b4c06e22b12"
+  },
+  "data\\processed\\TPLinkSmartPlug.csv": {
+    "size": 209118,
+    "mtime": 1793001947.2891903,
+    "sha256": "4dde4a793da9e5667b9e0cce6917f9a01370ca7f79ccdf6f032c0dd1aed736c2"
+  },
+  "data\\processed\\TPLinkSmartPlug_iat.csv": {
+    "size": 314408,
+    "mtime": 1793001947.2943563,
+    "sha256": "d293909dd0fd4c51060fc5da338f2de024a158e538eca92319a672038a5d6eec"
+  }
+}

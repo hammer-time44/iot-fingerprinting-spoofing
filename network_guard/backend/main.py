@@ -320,3 +320,4 @@ async def websocket_events(websocket: WebSocket):
     finally:
         if websocket in active_websockets:
             active_websockets.remove(websocket)
+

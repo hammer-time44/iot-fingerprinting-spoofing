@@ -119,3 +119,4 @@ def test_websocket_smoke():
         assert msg["type"] == "SNAPSHOT"
         assert "hosts" in msg
         assert len(msg["hosts"]) >= 5
+

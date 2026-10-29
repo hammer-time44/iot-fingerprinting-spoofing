@@ -1,0 +1,33 @@
+================================================================================
+          NETWORK DEFENSE LAB — DASHBOARD INTEGRATION PROOF                     
+================================================================================
+Verification Timestamp: 2026-10-29T12:12:38.854248
+Repository Root: C:\Users\Murali\Desktop\cn-proj\two\iot-fingerprinting
+Baseline Manifest Files: 178 files
+Current Scanned Files (excl. dist/cache): 179 files
+--------------------------------------------------------------------------------
+Intended Modified Files (1):
+  + [PERMITTED MOD] iot_fingerprint_gui\frontend\src\App.jsx
+Intended Added Files (7):
+  + [PERMITTED ADD] iot_fingerprint_gui\assets\evaluation\network_guard_data.json
+  + [PERMITTED ADD] iot_fingerprint_gui\frontend\public\data\network_guard_data.json
+  + [PERMITTED ADD] iot_fingerprint_gui\frontend\src\NetworkDefense.jsx
+  + [PERMITTED ADD] iot_fingerprint_gui\frontend\src\networkDefense\firewall.js
+  + [PERMITTED ADD] iot_fingerprint_gui\frontend\src\networkDefense\policy.js
+  + [PERMITTED ADD] iot_fingerprint_gui\frontend\src\networkDefense\simulation.js
+  + [PERMITTED ADD] iot_fingerprint_gui\frontend\src\networkDefense\stateMachine.js
+--------------------------------------------------------------------------------
+Unexpected Modified Files: 0
+Unexpected Added Files:    0
+Deleted Baseline Files:    0
+--------------------------------------------------------------------------------
+VERDICT: PASSED (STRICT INTEGRATION CONSTRAINTS PRESERVED)
+
+CERTIFICATION:
+Only the strictly permitted files were touched outside network_guard/.
+- App.jsx received minimal additive tab registration.
+- New tab component and helpers added under src/NetworkDefense.jsx & src/networkDefense/.
+- Static precomputed data generated under public/data/network_guard_data.json.
+All other 177 project files retain their initial byte-for-byte SHA-256 hashes.
+Zero baseline files were deleted or moved.
+================================================================================

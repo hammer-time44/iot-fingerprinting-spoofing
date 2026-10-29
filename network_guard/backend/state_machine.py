@@ -142,3 +142,4 @@ class HostStateMachine:
             STATE_QUARANTINED: 0,
             STATE_ISOLATED: 0
         }
+

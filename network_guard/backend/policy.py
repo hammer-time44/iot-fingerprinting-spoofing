@@ -51,3 +51,4 @@ def evaluate_policy(verdict: str) -> Dict[str, Any]:
             "description": f"Unrecognized verdict '{verdict}'. Safe isolation fallback applied."
         }
     return dict(POLICY_MAP[verdict])
+

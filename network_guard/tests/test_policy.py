@@ -39,3 +39,4 @@ def test_unrecognized_verdict_fallback():
     res = evaluate_policy("SOME_UNKNOWN_VERDICT")
     assert res["action"] == ACTION_ISOLATE
     assert res["alert"] is True
+

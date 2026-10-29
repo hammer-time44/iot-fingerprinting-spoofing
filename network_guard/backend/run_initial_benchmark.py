@@ -18,3 +18,4 @@ for sc, d in res["summary"].items():
 print("\n--- TIMING MIMICRY CURVE ---")
 for m in res["mimicry_curve"]:
     print(f"Strength {m['strength']:3.1f}: Detection {m['detection_rate_pct']:6.2f}%")
+
